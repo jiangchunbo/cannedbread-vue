@@ -1,10 +1,12 @@
 <template>
-$END$
+  <div class="app-container">
+
+  </div>
 </template>
 
 <script>
 export default {
-name: "Base64Encode"
+  name: "Base64Encode"
 }
 </script>
 

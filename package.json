@@ -14,13 +14,17 @@
     "test:ci": "npm run lint && npm run test:unit"
   },
   "dependencies": {
+    "@wangeditor/editor": "^5.1.18",
+    "@wangeditor/editor-for-vue": "^1.0.2",
     "axios": "0.18.1",
     "core-js": "3.6.5",
+    "crypto-js": "^4.1.1",
     "element-ui": "2.13.2",
     "js-cookie": "2.2.0",
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",
     "path-to-regexp": "2.4.0",
+    "v9u-smb2": "^1.0.6",
     "vue": "2.6.10",
     "vue-router": "3.0.6",
     "vuex": "3.1.0"
@@ -55,7 +59,7 @@
     "last 2 versions"
   ],
   "engines": {
-    "node": ">=8.9",
+    "node": ">=10.0",
     "npm": ">= 3.0.0"
   },
   "license": "MIT"

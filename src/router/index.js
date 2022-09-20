@@ -56,6 +56,32 @@ export const constantRoutes = [
   },
 
   {
+    path: '/algorithm',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'Algorithm',
+        component: () => import('@/views/algorithm/index'),
+        meta: { title: 'Algorithm', icon: 'algorithm' }
+      }
+    ]
+  },
+
+  {
+    path: '/message-board',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'MessageBoard',
+        component: () => import('@/views/message-board/index'),
+        meta: { title: 'MessageBoard', icon: 'message-board' }
+      }
+    ]
+  },
+
+  {
     path: '/example',
     component: Layout,
     redirect: '/example/table',
