@@ -11,7 +11,7 @@
     <el-form class="el-row mobile-message-input" size="small">
       <div class="el-col-20">
         <el-form-item>
-          <el-input v-model="content"></el-input>
+          <el-input v-model="content" type="textarea"></el-input>
         </el-form-item>
       </div>
       <div class="el-col-offset-1 el-col-3">
@@ -87,5 +87,10 @@ export default {
   border-top: 1px solid #eee;
 
   background: #fff;
+}
+
+.mobile-message-input textarea {
+  height: 30px;
+  resize: none;
 }
 </style>
