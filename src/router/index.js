@@ -55,18 +55,18 @@ export const constantRoutes = [
     }]
   },
 
-  {
-    path: '/algorithm',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'Algorithm',
-        component: () => import('@/views/algorithm/index'),
-        meta: { title: 'Algorithm', icon: 'algorithm' }
-      }
-    ]
-  },
+  // {
+  //   path: '/algorithm',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       name: 'Algorithm',
+  //       component: () => import('@/views/algorithm/index'),
+  //       meta: { title: 'Algorithm', icon: 'algorithm' }
+  //     }
+  //   ]
+  // },
 
   {
     path: '/message-board',
