@@ -23,6 +23,16 @@ import 'codemirror/addon/fold/foldgutter.js'
 import 'codemirror/addon/fold/brace-fold.js'
 import 'codemirror/addon/fold/comment-fold.js'
 
+import 'codemirror/addon/lint/lint.css'
+import 'codemirror/addon/lint/lint.js'
+import 'codemirror/addon/lint/json-lint.js'
+import jsonlint from 'jsonlint-mod'
+
+window.jsonlint = jsonlint
+
+import 'codemirror/addon/display/fullscreen.css'
+import 'codemirror/addon/display/fullscreen.js'
+
 export default {
   name: 'Json',
   data() {
@@ -35,6 +45,8 @@ export default {
         indentUnit: 4,
         lineNumbers: true,
         lineWrapping: false,
+        fullScreen: false,
+        lint: true,
         mode: 'application/json',
         theme: 'xq-light'
       }
