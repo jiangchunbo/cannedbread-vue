@@ -117,6 +117,19 @@ export const constantRoutes = [
   },
 
   {
+    path: '/json',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'Json',
+        component: () => import('@/views/json/index'),
+        meta: { title: 'Json', icon: 'Json' }
+      }
+    ]
+  },
+
+  {
     path: '/nested',
     component: Layout,
     redirect: '/nested/menu1',
