@@ -1,11 +1,25 @@
 <template>
-  <div>
-    <codemirror
-      v-model="json"
-      :options="cmOptions"
-    />
-    <el-button @click="remove">去转义</el-button>
-    <el-button @click="formatJson">格式化</el-button>
+  <div class="app-container" style="height: 100%">
+    <div class="json-tool-bar">
+      <el-button size="small" @click="remove">去转义</el-button>
+      <el-button size="small" @click="formatJson">格式化</el-button>
+    </div>
+    <div class="el-row" style="height: calc(100% - 50px)">
+      <div class="el-col-10" style="height: 100%">
+        <codemirror
+          v-model="rawJson"
+          class="json-codemirror"
+          :options="rowJsonCmOptions"
+        />
+      </div>
+      <div class="el-col-14" style="height: 100%">
+        <codemirror
+          v-model="json"
+          class="json-codemirror"
+          :options="cmOptions"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -37,7 +51,13 @@ export default {
   name: 'Json',
   data() {
     return {
-      json: '{"id": 1234}',
+      rawJson: '{}',
+      json: '{}',
+      rowJsonCmOptions: {
+        lineWrapping: true,
+        mode: 'text/plain',
+        theme: 'xq-light'
+      },
       cmOptions: {
         autoCloseBrackets: true,
         foldGutter: true,
@@ -54,17 +74,36 @@ export default {
   },
   methods: {
     formatJson() {
-      const json = this.json
-      const jsonObj = JSON.parse(json)
+      const rawJson = this.json
+      const jsonObj = JSON.parse(rawJson)
       this.json = JSON.stringify(jsonObj, null, 4)
     },
     remove() {
-      const json = this.json
-      this.json = json.replace(/\\/g, '')
+      try {
+        const rawJson = this.rawJson
+        this.json = JSON.parse('[\"' + rawJson + '\"]')[0]
+      } catch (error) {
+        this.$message({
+          message: error,
+          type: 'error'
+        })
+      }
     }
   }
 }
 </script>
 
-<style scoped>
+<style>
+.json-tool-bar {
+  height: 49px;
+  line-height: 49px;
+}
+.json-codemirror {
+  height: calc(100%);
+}
+
+.json-codemirror .CodeMirror {
+  height: 100%;
+  border: 1px solid #000;
+}
 </style>

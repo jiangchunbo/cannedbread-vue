@@ -63,7 +63,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'Algorithm',
         component: () => import('@/views/algorithm/index'),
-        meta: { title: 'Algorithm', icon: 'algorithm' }
+        meta: { title: 'Algorithm', icon: 'encrypt' }
       }
     ]
   },
@@ -124,7 +124,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'Json',
         component: () => import('@/views/json/index'),
-        meta: { title: 'Json', icon: 'Json' }
+        meta: { title: 'JSON', icon: 'json' }
       }
     ]
   },
