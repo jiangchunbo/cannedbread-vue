@@ -63,7 +63,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'Algorithm',
         component: () => import('@/views/algorithm/index'),
-        meta: { title: 'Algorithm', icon: 'algorithm' }
+        meta: { title: 'Algorithm', icon: 'encrypt' }
       }
     ]
   },
@@ -123,6 +123,19 @@ export const constantRoutes = [
         name: 'Form',
         component: () => import('@/views/form/index'),
         meta: { title: 'Form', icon: 'form' }
+      }
+    ]
+  },
+
+  {
+    path: '/json',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'Json',
+        component: () => import('@/views/json/index'),
+        meta: { title: 'JSON', icon: 'json' }
       }
     ]
   },
