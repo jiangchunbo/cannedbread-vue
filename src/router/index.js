@@ -67,7 +67,18 @@ export const constantRoutes = [
       }
     ]
   },
-
+  {
+    path: '/php',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'Php',
+        component: () => import('@/views/php/index'),
+        meta: { title: 'Php', icon: 'php' }
+      }
+    ]
+  },
   {
     path: '/message-board',
     component: Layout,
