@@ -1,14 +1,18 @@
 <template>
   <div class="dashboard-container">
-    <div class="dashboard-text">name: {{ name }}</div>
+    <user-ranking-list class="el-col-8"/>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import UserRankingList from '@/views/dashboard/components/UserRankingList';
 
 export default {
   name: 'Dashboard',
+  components: {
+    UserRankingList
+  },
   computed: {
     ...mapGetters([
       'name'

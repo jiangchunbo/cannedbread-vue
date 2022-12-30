@@ -128,7 +128,6 @@ export const constantRoutes = [
       }
     ]
   },
-
   {
     path: '/nested',
     component: Layout,
@@ -187,7 +186,28 @@ export const constantRoutes = [
       }
     ]
   },
-
+  {
+    path: '/jenkins',
+    component: Layout,
+    children: [
+      {
+        path: 'http://jenkins.jiangchunbo.com',
+        meta: { title: 'Jenkins', icon: 'jenkins' }
+      }
+    ]
+  },
+  {
+    path: '/redis',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/redis/index'),
+        name: 'Redis',
+        meta: { title: 'RedisInsight', icon: 'redis' }
+      }
+    ]
+  },
   {
     path: 'external-link',
     component: Layout,
@@ -195,6 +215,18 @@ export const constantRoutes = [
       {
         path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
         meta: { title: 'External Link', icon: 'link' }
+      }
+    ]
+  },
+  {
+    path: '/mine',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'Mine',
+        component: () => import('@/views/mine/index'),
+        meta: { title: '我的', icon: 'mine' }
       }
     ]
   },

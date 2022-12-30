@@ -3,16 +3,18 @@
     <div class="json-tool-bar">
       <el-button size="small" @click="remove">去转义</el-button>
       <el-button size="small" @click="formatJson">格式化</el-button>
+      <el-tag type="info">类型: {{ jsonType }}</el-tag>
+      <el-tag type="info">数组长度: {{ jsonArraySize }}</el-tag>
     </div>
     <div class="el-row" style="height: calc(100% - 50px)">
-      <div class="el-col-10" style="height: 100%">
+      <div class="el-col-10 codemirror-left-container" style="height: 100%">
         <codemirror
           v-model="rawJson"
           class="json-codemirror"
           :options="rowJsonCmOptions"
         />
       </div>
-      <div class="el-col-14" style="height: 100%">
+      <div class="el-col-14 codemirror-right-container" style="height: 100%">
         <codemirror
           v-model="json"
           class="json-codemirror"
@@ -53,6 +55,8 @@ export default {
     return {
       rawJson: '{}',
       json: '{}',
+      jsonType: '',
+      jsonArraySize: '',
       rowJsonCmOptions: {
         lineWrapping: true,
         mode: 'text/plain',
@@ -82,6 +86,10 @@ export default {
       try {
         const rawJson = this.rawJson
         this.json = JSON.parse('[\"' + rawJson + '\"]')[0]
+        const jsonObj = JSON.parse(this.json)
+        if (jsonObj instanceof Array) {
+          this.jsonArraySize = jsonObj.length
+        }
       } catch (error) {
         this.$message({
           message: error,
@@ -98,12 +106,23 @@ export default {
   height: 49px;
   line-height: 49px;
 }
+
 .json-codemirror {
   height: calc(100%);
 }
 
 .json-codemirror .CodeMirror {
+  font-family: Consolas, monospace;
   height: 100%;
-  border: 1px solid #000;
 }
+
+.codemirror-left-container {
+  border-top: 1px solid #333;
+  border-left: 1px solid #333;
+  border-bottom: 1px solid #333;
+}
+.codemirror-right-container {
+  border: 1px solid #333;
+}
+
 </style>
