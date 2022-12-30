@@ -39,6 +39,10 @@ Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明
 // Vue.use(ElementUI)
 
+import VueCodeMirror from 'vue-codemirror'
+import 'codemirror/lib/codemirror.css'
+Vue.use(VueCodeMirror)
+
 Vue.config.productionTip = false
 
 new Vue({

@@ -15,3 +15,11 @@ export function addMessage(data) {
     data
   })
 }
+
+export function executePhp(data) {
+  return request({
+    url: '/message-board/php',
+    method: 'post',
+    data
+  })
+}
