@@ -202,8 +202,10 @@ export const constantRoutes = [
     component: Layout,
     children: [
       {
-        path: 'http://jenkins.jiangchunbo.com',
-        meta: { title: 'Jenkins', icon: 'jenkins' }
+        path: 'index',
+        component: () => import('@/views/jenkins/index'),
+        name: 'Jenkins',
+        meta: { title: 'Jenkins', icon: 'jenkins', cacheIframe: true }
       }
     ]
   },
@@ -215,17 +217,41 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/redis/index'),
         name: 'Redis',
-        meta: { title: 'RedisInsight', icon: 'redis' }
+        meta: { title: 'RedisInsight', icon: 'redis', cacheIframe: true }
       }
     ]
   },
   {
-    path: 'external-link',
+    path: '/rabbitmq',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'Rabbitmq',
+        component: () => import('@/views/rabbitmq/index'),
+        meta: { title: 'RabbitMQ', icon: 'rabbitmq', cacheIframe: true }
+      }
+    ]
+  },
+  {
+    path: '/external-link',
     component: Layout,
     children: [
       {
         path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
         meta: { title: 'External Link', icon: 'link' }
+      }
+    ]
+  },
+  {
+    path: '/heroic-expeditions',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'HeroicExpeditions',
+        component: () => import('@/views/heroic-expeditions/index'),
+        meta: { title: '英雄的远征', icon: 'heroicExpeditions' }
       }
     ]
   },

@@ -3,14 +3,15 @@
     <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="8">
       <el-form ref="form" :model="form" label-width="80px" size="mini">
         <el-form-item label="昵称">
-          <el-input v-model="form.nickname" :disabled="true"/>
+          <span v-if="formMode === 'view'">{{ form.nickname }}</span>
+          <el-input v-if="formMode === 'edit'" v-model="form.nickname"/>
         </el-form-item>
         <el-form-item label="积分">
-          <el-input v-model="form.points" :disabled="true"/>
+          <span>{{ form.points }}</span>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">编辑</el-button>
-          <el-button>取消</el-button>
+          <el-button type="primary" @click="onSubmit">{{ formMode === 'edit' ? '确认' : '编辑' }}</el-button>
+          <el-button v-if="formMode === 'edit'" @click="onCancel">取消</el-button>
         </el-form-item>
       </el-form>
     </el-col>
@@ -18,16 +19,18 @@
 </template>
 
 <script>
-import {getDetail} from "@/api/user";
+import {editPersonalInfo, getDetail} from "@/api/user";
 
 export default {
   name: 'Mine',
   data() {
     return {
+      oldForm: {},
       form: {
         nickname: '',
         points: ''
-      }
+      },
+      formMode: 'view'
     }
   },
   methods: {
@@ -39,6 +42,24 @@ export default {
           points: data['points']
         }
       })
+    },
+    onSubmit() {
+      if (this.formMode === 'view') {
+        this.formMode = 'edit'
+        Object.assign(this.oldForm, this.form)
+      } else {
+        editPersonalInfo({
+          nickname: this.form.nickname
+        })
+        this.formMode = 'view'
+      }
+    },
+    onCancel() {
+      if (this.formMode !== 'edit') {
+        return
+      }
+      this.formMode = 'view'
+      this.form = this.oldForm
     }
   },
   mounted() {

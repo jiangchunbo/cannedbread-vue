@@ -24,6 +24,14 @@ export function getDetail(token) {
   })
 }
 
+export function editPersonalInfo(data) {
+  return request({
+    url: `/basic/user/edit`,
+    method: 'post',
+    data
+  })
+}
+
 export function logout() {
   return request({
     url: '/user/logout',

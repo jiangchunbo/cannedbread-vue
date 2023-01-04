@@ -1,17 +1,75 @@
 <template>
   <section class="app-main">
-    <transition name="fade-transform" mode="out-in">
-      <router-view :key="key" />
-    </transition>
+    <keep-alive>
+      <router-view v-if="this.$route.meta && !$route.meta.cacheIframe"/>
+    </keep-alive>
+
+    <component
+      :is="item.name"
+      v-for="item in hasOpenComponentsArr"
+      v-show="$route.name === item.name"
+      :key="item.name"/>
   </section>
 </template>
 
 <script>
+import Vue from 'vue'
+
 export default {
   name: 'AppMain',
+  data() {
+    return {
+      iframeComponents: []
+    }
+  },
   computed: {
     key() {
       return this.$route.path
+    },
+    // 实现懒加载，只渲染已经打开过（hasOpen:true）的iframe页
+    hasOpenComponentsArr() {
+      return this.iframeComponents.filter(item => item.hasOpen)
+    }
+  },
+  watch: {
+    $route() {
+      this.isOpenIframePage()
+    }
+  },
+  created() {
+    const iframeComponents = this.getIframeComponents()
+    iframeComponents.forEach(item => {
+      Vue.component(item.name, item.component)
+    })
+    this.iframeComponents = iframeComponents
+  },
+  methods: {
+    // 根据当前路由设置hasOpen
+    isOpenIframePage() {
+      const target = this.iframeComponents.find(item => {
+        return item.name === this.$route.name
+      })
+      if (target && !target.hasOpen) {
+        target.hasOpen = true
+      }
+    },
+    getIframeComponents() {
+      const router = this.$router
+      const routes = router.options.routes
+      const iframeRoutes = routes.filter(item => {
+        return item.children && item.children.length === 1 &&
+          item.children[0].meta &&
+          item.children[0].meta.cacheIframe
+      })
+      return iframeRoutes.map((item) => {
+        const route = item.children[0]
+        return {
+          name: route.name,
+          path: item.path + route.path,
+          hasOpen: false, // 是否打开过，默认false
+          component: route.component // 组件文件的引用
+        }
+      })
     }
   }
 }
@@ -25,7 +83,8 @@ export default {
   position: relative;
   overflow: hidden;
 }
-.fixed-header+.app-main {
+
+.fixed-header + .app-main {
   padding-top: 50px;
 }
 </style>

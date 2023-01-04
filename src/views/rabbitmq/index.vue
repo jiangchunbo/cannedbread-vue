@@ -1,5 +1,5 @@
 <template>
-  <iframe style="height: calc(100vh - 50px); width: 100%; border: none;" src="http://jenkins.jiangchunbo.com"/>
+  <iframe style="height: calc(100vh - 50px); width: 100%; border: none;" src="http://rabbitmq.jiangchunbo.com"/>
 </template>
 
 <script>

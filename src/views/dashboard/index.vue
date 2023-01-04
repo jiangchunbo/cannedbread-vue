@@ -1,11 +1,13 @@
 <template>
   <div class="dashboard-container">
-    <user-ranking-list class="el-col-8"/>
+    <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="8">
+      <user-ranking-list ref="userRankingList"/>
+    </el-col>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import {mapGetters} from 'vuex'
 import UserRankingList from '@/views/dashboard/components/UserRankingList';
 
 export default {
@@ -17,6 +19,11 @@ export default {
     ...mapGetters([
       'name'
     ])
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.$refs.userRankingList.refreshUserRankingList()
+    })
   }
 }
 </script>
@@ -26,6 +33,7 @@ export default {
   &-container {
     margin: 30px;
   }
+
   &-text {
     font-size: 30px;
     line-height: 46px;
