@@ -51,7 +51,7 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
+      meta: { title: '仪表盘', icon: 'dashboard' }
     }]
   },
 
@@ -63,7 +63,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'Algorithm',
         component: () => import('@/views/algorithm/index'),
-        meta: { title: 'Algorithm', icon: 'encrypt' }
+        meta: { title: '加密解密', icon: 'encrypt' }
       }
     ]
   },
@@ -75,7 +75,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'Php',
         component: () => import('@/views/php/index'),
-        meta: { title: 'Php', icon: 'php' }
+        meta: { title: 'PHP 执行器', icon: 'php' }
       }
     ]
   },
@@ -135,7 +135,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'Json',
         component: () => import('@/views/json/index'),
-        meta: { title: 'JSON', icon: 'json' }
+        meta: { title: 'JSON 格式化', icon: 'json' }
       }
     ]
   },
@@ -244,14 +244,26 @@ export const constantRoutes = [
     ]
   },
   {
-    path: '/heroic-expeditions',
+    path: '/war3',
     component: Layout,
     children: [
       {
         path: 'index',
-        name: 'HeroicExpeditions',
-        component: () => import('@/views/heroic-expeditions/index'),
+        name: 'war3',
+        component: () => import('@/views/war3/index'),
         meta: { title: '英雄的远征', icon: 'heroicExpeditions' }
+      }
+    ]
+  },
+  {
+    path: '/system',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'System',
+        component: () => import('@/views/system/index'),
+        meta: { title: '系统', icon: 'system' }
       }
     ]
   },

@@ -13,7 +13,7 @@
         <el-input v-model="inputBase64String" type="textarea" class="url-encode-textarea"/>
       </el-form-item>
 
-      <img :src="imageSrc" alt="??"/>
+      <img :src="imageSrc" alt=""/>
     </el-form>
   </div>
 </template>
@@ -33,7 +33,7 @@ export default {
     },
     imageSrc: function () {
       try {
-        return "data:image/jpeg;base64," + this.inputBase64String
+        return 'data:image/jpeg;base64,' + this.inputBase64String
       } catch (error) {
         return ''
       }

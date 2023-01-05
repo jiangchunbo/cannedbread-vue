@@ -35,7 +35,7 @@
             </tbody>
           </table>
         </figure>
-        <p slot="reference">encodeURI 编码（不会对特殊符号编码）:</p>
+        <p slot="reference" style="display: inline-block">encodeURI 编码（不会对特殊符号编码）:</p>
       </el-popover>
       <el-input v-model="originString" type="textarea" class="url-encode-textarea"/>
 
@@ -46,8 +46,9 @@
         <p><code>encodeURIComponent</code> 转义除了如下所示外的所有字符：</p>
         <div class="code-example"><pre>不转义的字符：
     A-Z a-z 0-9 - _ . ! ~ * ' ( )
-</pre></div>
-        <p slot="reference">encodeURIComponent 编码（会对特殊符号编码）:</p>
+</pre>
+        </div>
+        <p slot="reference" style="display: inline-block">encodeURIComponent 编码（会对特殊符号编码）:</p>
       </el-popover>
       <el-input v-model="encodeUriComponentString" type="textarea" class="url-encode-textarea"/>
     </el-form>

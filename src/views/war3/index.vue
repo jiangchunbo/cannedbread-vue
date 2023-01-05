@@ -1,0 +1,27 @@
+<template>
+  <div class="app-container">
+    <el-tabs v-model="activeName">
+      <el-tab-pane label="英雄的远征" name="英雄的远征">
+        <heroic-expeditions/>
+      </el-tab-pane>
+      <el-tab-pane label="海战" name="second">海战</el-tab-pane>
+    </el-tabs>
+  </div>
+</template>
+
+<script>
+import HeroicExpeditions from '@/views/war3/components/HeroicExpeditions';
+
+export default {
+  components: {HeroicExpeditions},
+  data() {
+    return {
+      activeName: '英雄的远征'
+    }
+  }
+}
+</script>
+
+<style scoped>
+</style>
+

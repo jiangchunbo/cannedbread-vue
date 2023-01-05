@@ -1,10 +1,11 @@
 <template>
   <div class="app-container">
     <el-timeline class="mobile-message-list">
-      <el-timeline-item v-for="(value, index) in messageList" :key="index" :timestamp="value['createTime']"
+      <el-timeline-item v-for="(value, index) in messageList" :key="index" :timestamp="value['sendDateTime']"
                         placement="top">
         <el-card>
-          <p>{{ value['content'] }}</p>
+          <h4>{{ value['content'] }}</h4>
+          <p>{{ value['senderName'] }}  {{ value['sendDateTime'] }}</p>
         </el-card>
       </el-timeline-item>
     </el-timeline>
@@ -25,7 +26,7 @@
 
 <script>
 import {Editor, Toolbar} from '@wangeditor/editor-for-vue'
-import {getList, addMessage} from '@/api/message-board'
+import {addMessage, fetchMessageBoardList} from "@/api/message-board";
 
 export default {
   name: 'MessageBoard',
@@ -36,11 +37,12 @@ export default {
     return {
       messageList: [],
       mode: 'simple',
-      content: ''
+      content: '',
+      timer: null
     }
   },
   mounted() {
-    this.refreshMessageList()
+
   },
   beforeDestroy() {
     const editor = this.editor
@@ -48,8 +50,12 @@ export default {
     editor.destroy() // 组件销毁时，及时销毁编辑器
   },
   methods: {
+    timeoutRefreshMessageList() {
+      this.refreshMessageList()
+      this.timer = setTimeout(this.timeoutRefreshMessageList, 1000)
+    },
     refreshMessageList() {
-      getList().then(res => {
+      fetchMessageBoardList().then(res => {
         const {data} = res
         this.messageList = data
       })
@@ -64,6 +70,14 @@ export default {
         console.log(res)
         this.refreshMessageList()
       })
+    },
+    beforeRouteEnter(from, to, next) {
+      next(vm => {
+        this.timeoutRefreshMessageList()
+      })
+    },
+    beforeRouteLeave() {
+      clearTimeout(this.timer)
     }
   }
 }

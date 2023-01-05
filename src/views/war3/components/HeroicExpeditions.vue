@@ -1,24 +1,23 @@
 <template>
-  <div class="app-container">
-    <el-table
-      :data="equipmentData">
-      <el-table-column
-        prop="name"
-        label="装备名称"
-        width="180"
-      />
-      <el-table-column
-        prop="combinationRule"
-        label="合成公式"
-      />
-    </el-table>
-  </div>
+  <el-table
+    :data="equipmentData">
+    <el-table-column
+      prop="name"
+      label="装备名称"
+      width="180"
+    />
+    <el-table-column
+      prop="combinationRule"
+      label="合成公式"
+    />
+  </el-table>
 </template>
 
 <script>
-import {fetchEquipmentList} from "@/api/heroic-expeditions";
+import {fetchEquipmentList} from '@/api/heroic-expeditions'
 
 export default {
+  name: 'HeroicExpeditions',
   data() {
     return {
       equipmentData: []
@@ -40,5 +39,5 @@ export default {
 </script>
 
 <style scoped>
-</style>
 
+</style>
