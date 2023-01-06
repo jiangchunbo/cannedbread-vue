@@ -8,10 +8,13 @@ export function fetchMessageBoardList(params) {
   })
 }
 
-export function addMessage(data) {
+export function sendMessage(data) {
   return request({
     url: '/message-board/message/add',
     method: 'post',
-    data
+    data,
+    headers: {
+      'Content-Type': 'text/plain'
+    }
   })
 }

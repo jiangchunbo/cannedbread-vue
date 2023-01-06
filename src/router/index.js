@@ -87,7 +87,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'MessageBoard',
         component: () => import('@/views/message-board/index'),
-        meta: { title: 'MessageBoard', icon: 'message-board' }
+        meta: { title: '留言板', icon: 'message-board' }
       }
     ]
   },
