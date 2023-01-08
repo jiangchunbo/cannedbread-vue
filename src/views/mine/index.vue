@@ -9,6 +9,9 @@
         <el-form-item label="积分">
           <span>{{ form.points }}</span>
         </el-form-item>
+        <el-form-item label="IP 地址">
+          <span>{{ form.ipAddress }}</span>
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">{{ formMode === 'edit' ? '确认' : '编辑' }}</el-button>
           <el-button v-if="formMode === 'edit'" @click="onCancel">取消</el-button>
@@ -28,7 +31,8 @@ export default {
       oldForm: {},
       form: {
         nickname: '',
-        points: ''
+        points: '',
+        ipAddress: ''
       },
       formMode: 'view'
     }
@@ -39,7 +43,8 @@ export default {
         const {data} = res
         this.form = {
           nickname: data['nickname'],
-          points: data['points']
+          points: data['points'],
+          ipAddress: data['ipAddress']
         }
       })
     },

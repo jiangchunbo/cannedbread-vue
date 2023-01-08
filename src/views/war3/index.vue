@@ -1,6 +1,6 @@
 <template>
-  <div class="app-container">
-    <el-tabs v-model="activeName">
+  <div class="app-container" style="height: 100%">
+    <el-tabs v-model="activeName" style="height: 100%">
       <el-tab-pane label="英雄的远征" name="英雄的远征">
         <heroic-expeditions/>
       </el-tab-pane>
@@ -22,6 +22,11 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
+
+.el-tabs__content {
+  height: calc(100% - 55px);
+  overflow-y: auto;
+}
 </style>
 
