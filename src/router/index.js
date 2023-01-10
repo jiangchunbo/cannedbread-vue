@@ -54,6 +54,18 @@ export const constantRoutes = [
       meta: { title: '仪表盘', icon: 'dashboard' }
     }]
   },
+  {
+    path: '/update-log',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'UpdateLog',
+        component: () => import('@/views/update-log/index'),
+        meta: { title: '更新日志', icon: 'update-log' }
+      }
+    ]
+  },
 
   {
     path: '/algorithm',
@@ -87,7 +99,20 @@ export const constantRoutes = [
         path: 'index',
         name: 'MessageBoard',
         component: () => import('@/views/message-board/index'),
-        meta: { title: '留言板', icon: 'message-board' }
+        meta: { title: '留言板', icon: 'message' }
+      }
+    ]
+  },
+
+  {
+    path: '/baidu-netdisk',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'BaiduNetdisk',
+        component: () => import('@/views/baidu-netdisk/index'),
+        meta: { title: '百度网盘', icon: 'baidu-netdisk' }
       }
     ]
   },
@@ -114,18 +139,18 @@ export const constantRoutes = [
     ]
   },
 
-  {
-    path: '/form',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
-      }
-    ]
-  },
+  // {
+  //   path: '/form',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       name: 'Form',
+  //       component: () => import('@/views/form/index'),
+  //       meta: { title: 'Form', icon: 'form' }
+  //     }
+  //   ]
+  // },
 
   {
     path: '/json',
@@ -233,13 +258,25 @@ export const constantRoutes = [
       }
     ]
   },
+  // {
+  //   path: '/external-link',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
+  //       meta: { title: 'External Link', icon: 'link' }
+  //     }
+  //   ]
+  // },
   {
-    path: '/external-link',
+    path: '/blog',
     component: Layout,
     children: [
       {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
+        path: 'index',
+        name: 'Blog',
+        component: () => import('@/views/blog/index'),
+        meta: { title: '博客', icon: 'blog', cacheIframe: true }
       }
     ]
   },
@@ -251,7 +288,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'war3',
         component: () => import('@/views/war3/index'),
-        meta: { title: '英雄的远征', icon: 'heroicExpeditions' }
+        meta: { title: 'War3', icon: 'war3' }
       }
     ]
   },

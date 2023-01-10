@@ -45,6 +45,9 @@ Vue.use(VueCodeMirror)
 
 Vue.config.productionTip = false
 
+import axios from './utils/request'
+Vue.prototype.$axios = axios
+
 new Vue({
   el: '#app',
   router,

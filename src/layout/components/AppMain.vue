@@ -1,7 +1,7 @@
 <template>
   <section class="app-main">
     <keep-alive>
-      <router-view v-if="this.$route.meta && !$route.meta.cacheIframe"/>
+      <router-view v-if="$route.meta && !$route.meta.cacheIframe"/>
     </keep-alive>
 
     <component

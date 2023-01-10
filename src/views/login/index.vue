@@ -1,7 +1,13 @@
 <template>
   <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on"
-             label-position="left">
+    <el-form
+      ref="loginForm"
+      :model="loginForm"
+      :rules="loginRules"
+      class="login-form"
+      auto-complete="on"
+      label-position="left"
+    >
 
       <div class="title-container">
         <h3 class="title">登录</h3>
@@ -9,7 +15,7 @@
 
       <el-form-item prop="username" :error="usernameError">
         <span class="svg-container">
-          <svg-icon icon-class="user"/>
+          <svg-icon icon-class="user" />
         </span>
         <el-input
           ref="username"
@@ -24,7 +30,7 @@
 
       <el-form-item prop="password" :error="passwordError">
         <span class="svg-container">
-          <svg-icon icon-class="password"/>
+          <svg-icon icon-class="password" />
         </span>
         <el-input
           :key="passwordType"
@@ -38,16 +44,44 @@
           @keyup.enter.native="handleLogin"
         />
         <span class="show-pwd" @click="showPwd">
-          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"/>
+          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-top: 5px; margin-bottom:30px;"
-                 @click.native.prevent="handleLogin">登录
+      <el-form-item
+        v-if="showVerificationCodeInput"
+        prop="code"
+        :error="verificationCodeError"
+      >
+        <span class="svg-container">
+          <svg-icon icon-class="verification-code" />
+        </span>
+        <el-input
+          ref="code"
+          v-model="loginForm.code"
+          placeholder="请输入验证码"
+          type="text"
+          tabindex="1"
+        />
+        <el-image
+          :src="verificationCodeImgUrl"
+          fit="contain"
+          class="verification-code-img"
+          @click="refreshCode"
+        />
+      </el-form-item>
+
+      <el-button
+        :loading="loading"
+        type="primary"
+        style="width:100%;margin-top: 5px; margin-bottom:30px;"
+        @click.native.prevent="handleLogin"
+      >
+        登录
       </el-button>
 
       <div class="tips">
-        <span style="margin-right:20px;"></span>
+        <span style="margin-right:20px;" />
       </div>
 
     </el-form>
@@ -55,7 +89,8 @@
 </template>
 
 <script>
-import {validUsername} from '@/utils/validate'
+import { validUsername } from '@/utils/validate'
+import Cookies from 'js-cookie'
 
 export default {
   name: 'Login',
@@ -74,25 +109,42 @@ export default {
         callback()
       }
     }
+    const validateVerificationCode = (rule, value, callback) => {
+      if (this.showVerificationCodeInput && value.length === 0) {
+        callback(new Error('请输入验证码'))
+      } else {
+        callback()
+      }
+    }
     return {
       loginForm: {
         username: '',
-        password: ''
+        password: '',
+        code: ''
       },
+      showVerificationCodeInput: false,
       loginRules: {
-        username: [{required: true, trigger: 'blur', validator: validateUsername}],
-        password: [{required: true, trigger: 'blur', validator: validatePassword}]
+        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        password: [{ required: true, trigger: 'blur', validator: validatePassword }],
+        code: [{
+          required: this.showVerificationCodeInput,
+          trigger: 'blur',
+          validator: validateVerificationCode
+        }]
       },
       usernameError: '',
       passwordError: '',
+      verificationCodeError: '',
       loading: false,
       passwordType: 'password',
-      redirect: undefined
+      redirect: undefined,
+      verificationCodeImgUrl: `${process.env.VUE_APP_BASE_API}/user/login/verification-code`,
+      refreshCodeCount: 0
     }
   },
   watch: {
     $route: {
-      handler: function (route) {
+      handler: function(route) {
         this.redirect = route.query && route.query.redirect
       },
       immediate: true
@@ -110,22 +162,39 @@ export default {
       })
     },
     handleLogin() {
+      if (Cookies.get('loginRequireCode') !== undefined) {
+        this.showVerificationCodeInput = true
+      }
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
           this.usernameError = ''
           this.passwordError = ''
+          this.verificationCodeError = ''
           this.$store.dispatch('user/login', this.loginForm).then(() => {
-            console.log(this.redirect)
-            this.$router.push({path: this.redirect || '/'})
+            this.$router.push({ path: this.redirect || '/' })
             this.loading = false
           }).catch((error) => {
             console.log(this.redirect)
             this.loading = false
-            if (error.code === 60001) {
-              this.usernameError = error.message
-            } else if (error.code === 60002) {
-              this.passwordError = error.message
+            switch (error.code) {
+              case 60001: // 用户名不存在
+                this.usernameError = error.message
+                break
+              case 60002: // 密码错误
+                this.passwordError = error.message
+                if (Cookies.get('loginRequireCode') !== undefined && !this.showVerificationCodeInput) {
+                  this.refreshCode()
+                  this.showVerificationCodeInput = true
+                  this.verificationCodeError = '请输入验证码'
+                }
+                break
+              case 60003:
+                this.verificationCodeError = error.message
+                break
+              case 60004: // 锁定本账户登录
+                this.usernameError = error.message
+                break
             }
           })
         } else {
@@ -133,7 +202,16 @@ export default {
           return false
         }
       })
+    },
+    refreshCode() {
+      this.verificationCodeImgUrl = `${process.env.VUE_APP_BASE_API}/user/login/verification-code?${this.refreshCodeCount++}`
     }
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.showVerificationCodeInput = Cookies.get('loginRequireCode') !== undefined;vm
+      vm.loginForm.code = ''
+    })
   }
 }
 </script>
@@ -185,7 +263,7 @@ $cursor: #fff;
 }
 </style>
 
-<style lang="scss" scoped>
+<style lang="scss">
 $bg: #2d3a4b;
 $dark_gray: #889aa4;
 $light_gray: #eee;
@@ -203,6 +281,19 @@ $light_gray: #eee;
     padding: 160px 35px 0;
     margin: 0 auto;
     overflow: hidden;
+
+    .verification-code-img {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: calc(15% - 30px);
+      margin: auto;
+
+      width: 120px;
+      height: 30px;
+
+      cursor: pointer;
+    }
   }
 
   .tips {

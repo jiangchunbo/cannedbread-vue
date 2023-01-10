@@ -3,15 +3,16 @@
     <el-form>
       <el-form-item>
         <el-select v-model="form.level" placeholder="请选择装备等级" clearable @change="onChangeLevel">
-          <el-option label="等级: S" value="S"/>
-          <el-option label="等级: A" value="A"/>
-          <el-option label="等级: B" value="B"/>
-          <el-option label="等级: C" value="C"/>
+          <el-option label="等级: S" value="S" />
+          <el-option label="等级: A" value="A" />
+          <el-option label="等级: B" value="B" />
+          <el-option label="等级: C" value="C" />
         </el-select>
       </el-form-item>
     </el-form>
     <el-table
-      :data="filterEquipmentData">
+      :data="filterEquipmentData"
+    >
       <el-table-column
         prop="attribute"
         label="装备"
@@ -21,8 +22,8 @@
           <el-image
             style="width: 250px;"
             :src="scope.row.attribute"
-            :preview-src-list="[scope.row.attribute]">
-          </el-image>
+            :preview-src-list="[scope.row.attribute]"
+          />
         </template>
       </el-table-column>
       <el-table-column
@@ -35,8 +36,8 @@
             v-if="scope.row.combinationRuleFormat === 'url'"
             style="width: 250px;"
             :src="scope.row.combinationRule"
-            :preview-src-list="[scope.row.combinationRule]">
-          </el-image>
+            :preview-src-list="[scope.row.combinationRule]"
+          />
           <span v-else>{{ scope.row.combinationRule }}</span>
         </template>
       </el-table-column>
@@ -45,7 +46,7 @@
 </template>
 
 <script>
-import {fetchEquipmentList} from '@/api/heroic-expeditions'
+import { fetchEquipmentList } from '@/api/heroic-expeditions'
 
 export default {
   name: 'HeroicExpeditions',
@@ -76,7 +77,7 @@ export default {
   methods: {
     renderEquipmentTable(params) {
       fetchEquipmentList(params).then(res => {
-        const {data} = res
+        const { data } = res
         this.equipmentData = data
       })
     },

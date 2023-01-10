@@ -16,11 +16,10 @@ export function getInfo(token) {
   })
 }
 
-export function getDetail(token) {
+export function getDetail() {
   return request({
     url: `/basic/user-detail`,
-    method: 'get',
-    params: { token }
+    method: 'get'
   })
 }
 

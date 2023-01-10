@@ -1,6 +1,9 @@
 <template>
   <div id="app">
-    <router-view />
+    <keep-alive v-if="$route.name !== 'Login'">
+      <router-view />
+    </keep-alive>
+    <router-view v-else />
   </div>
 </template>
 

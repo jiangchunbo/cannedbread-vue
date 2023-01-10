@@ -1,25 +1,32 @@
 <template>
-  <el-row style="position:relative; height: 100%; padding: 20px 0 50px 0;">
-    <el-col :offset="1" :span="22" class="message-container">
+  <el-row style="height: 100%; display: flex; flex-direction: column">
+    <el-col :offset="1" :span="22" class="message-list-container">
       <el-timeline>
         <el-timeline-item
-          v-for="(value, index) in messageList" :key="index"
+          v-for="(value, index) in messageList"
+          :key="index"
           :ref="`messageItem${index}`"
           :timestamp="`${value['senderName']} ${value['sendDateTime']}`"
           placement="top"
           class="message-item"
-          :style="`top: ${value.styleTop ? value.styleTop : 0}px`">
+          :style="`top: ${value.styleTop ? value.styleTop : 0}px`"
+        >
           <el-card>
             <p>{{ value['content'] }}</p>
           </el-card>
         </el-timeline-item>
       </el-timeline>
     </el-col>
-    <el-form class="el-row mobile-message-input" inline size="small">
-      <el-form-item class="textarea">
-        <el-input v-model="content" type="textarea"></el-input>
+    <el-form class="el-row message-input-form" inline>
+      <el-form-item class="message-input">
+        <el-input
+          ref="inputTextarea"
+          v-model="content"
+          type="textarea"
+          :autosize="{minRows:1,maxRows:5}"
+        />
       </el-form-item>
-      <el-form-item>
+      <el-form-item class="message-send">
         <el-button type="primary" @click="submitMessage(content)">提交</el-button>
       </el-form-item>
     </el-form>
@@ -27,20 +34,19 @@
 </template>
 
 <script>
-import {Editor, Toolbar} from '@wangeditor/editor-for-vue'
-import {fetchMessageBoardList, sendMessage} from "@/api/message-board";
+import { fetchMessageBoardList, sendMessage } from '@/api/message-board'
+import { Message } from 'element-ui'
 
 export default {
   name: 'MessageBoard',
   components: {
-    Editor, Toolbar
   },
   data() {
     return {
       messageList: [],
       mode: 'simple',
       content: '',
-      timer: null
+      timer: 0
     }
   },
   mounted() {
@@ -50,11 +56,10 @@ export default {
     if (editor == null) return
     editor.destroy() // 组件销毁时，及时销毁编辑器
   },
-  watch: {},
   methods: {
-    timeoutRefreshMessageList(limit) {
+    timeoutRefreshMessageList() {
       this.refreshMessageList().then(res => {
-        const {data} = res
+        const { data } = res
         const additionalList = data
         if (additionalList.length > 0) {
           this.messageList.unshift(...additionalList)
@@ -85,7 +90,6 @@ export default {
           this.timer = setTimeout(this.timeoutRefreshMessageList, 1000)
         })
       })
-
     },
     refreshMessageList() {
       if (this.messageList.length > 0) {
@@ -102,11 +106,13 @@ export default {
         })
       }
     },
-    onCreated(editor) {
-      this.editor = Object.seal(editor) // 一定要用 Object.seal() ，否则会报错
-    },
     submitMessage(content) {
-      sendMessage(content).then(res => {
+      if (content.trim().length === 0) {
+        Message.warning({
+          message: '不能发送空白消息'
+        })
+      }
+      sendMessage(content).then(() => {
         clearTimeout(this.timer)
         this.timeoutRefreshMessageList()
         this.content = ''
@@ -126,65 +132,69 @@ export default {
 </script>
 
 <style src="@wangeditor/editor/dist/css/style.css"></style>
-<style>
-.message-container .el-timeline {
+<style lang="scss">
+.message-list-container {
+  flex: 1;
   position: relative;
+  padding-top: 20px;
+
+  .el-timeline {
+    position: relative;
+    height: 100%;
+    overflow-y: auto;
+
+    .message-item {
+      position: absolute;
+      left: 1px;
+      right: 0;
+      white-space: pre-line;
+    }
+  }
 }
 
-.message-container .el-timeline:after {
-  content: '';
-  display: block;
-  clear: both;
-}
-
-.message-container {
-  position: relative;
-  height: 100%;
-}
-
-.message-container .el-timeline {
-  height: 100%;
-  overflow: auto;
-}
-
-.mobile-message-list {
-  /*position: relative;*/
-  overflow: auto;
-  height: calc(100% - 50px);
-}
-
-.message-item {
-  position: absolute;
-  left: 30px;
-  right: 30px;
-}
-
-.mobile-message-input {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 5px;
+.message-input-form {
   display: flex;
-  height: 50px;
+  flex-direction: row;
   margin-left: 0;
   margin-right: 0;
-  padding: 10px 20px 0 20px;
+  padding: 10px 20px 10px 20px;
   border-top: 1px solid #eee;
-
   background: #fff;
+
+  .el-form-item {
+    margin-bottom: 0;
+  }
+
+  .message-input {
+    flex: 1;
+    align-self: flex-end;
+
+    textarea {
+      box-sizing: border-box;
+      font-size: 18px;
+      font-family: 'Noto Serif SC', monospace;
+      resize: none;
+    }
+
+    textarea::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .message-send {
+    display: inline;
+    margin-bottom: 0;
+    margin-right: 0;
+    align-self: flex-end;
+  }
+
+  .el-form-item__content,
+  .el-textarea {
+    width: 100%;
+  }
 }
 
-.mobile-message-input .textarea {
-  flex-grow: 1;
-}
-
-.mobile-message-input .el-form-item__content,
-.mobile-message-input .el-textarea{
-  width: 100%;
-}
-
-.mobile-message-input textarea {
-  resize: none;
-  height: 30px;
+.message-editor-form-item {
+  margin-bottom: 0 !important;
 }
 </style>

@@ -2,12 +2,19 @@ import request from '@/utils/request'
 
 export function executePhp(data) {
   return request({
-    url: '/util/php',
+    url: '/code-executor/php',
     method: 'post',
     data,
     headers: {
       'Content-Type': 'text/plain'
     }
+  })
+}
+
+export function getPhpExecutorConfig() {
+  return request({
+    url: '/code-executor/php/config',
+    method: 'get'
   })
 }
 
@@ -25,3 +32,19 @@ export function listSystemProperties() {
     method: 'get'
   })
 }
+
+export function fetchUpdateLogList() {
+  return request({
+    url: '/basis/update-log/list',
+    method: 'get'
+  })
+}
+
+export function fetchBaiduNetdiskFileList(params) {
+  return request({
+    url: '/baidu-netdisk/list',
+    method: 'get',
+    params
+  })
+}
+

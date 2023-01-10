@@ -4,7 +4,7 @@
       <el-form ref="form" :model="form" label-width="80px" size="mini">
         <el-form-item label="昵称">
           <span v-if="formMode === 'view'">{{ form.nickname }}</span>
-          <el-input v-if="formMode === 'edit'" v-model="form.nickname"/>
+          <el-input v-if="formMode === 'edit'" v-model="form.nickname" />
         </el-form-item>
         <el-form-item label="积分">
           <span>{{ form.points }}</span>
@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import {editPersonalInfo, getDetail} from "@/api/user";
+import { editPersonalInfo, getDetail } from '@/api/user'
 
 export default {
   name: 'Mine',
@@ -37,10 +37,12 @@ export default {
       formMode: 'view'
     }
   },
+  mounted() {
+  },
   methods: {
     renderUserInfo() {
-      getDetail('').then(res => {
-        const {data} = res
+      getDetail().then(res => {
+        const { data } = res
         this.form = {
           nickname: data['nickname'],
           points: data['points'],
@@ -67,8 +69,10 @@ export default {
       this.form = this.oldForm
     }
   },
-  mounted() {
-    this.renderUserInfo()
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.renderUserInfo()
+    })
   }
 }
 </script>
