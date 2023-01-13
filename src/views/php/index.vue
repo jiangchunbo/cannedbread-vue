@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container" style="height: 100%">
+  <div class="app-container" style="height: 100%; overflow-y: auto" >
     <div class="php-tool-bar">
       <el-button size="small" :loading="loading" @click="doExecutePhp()">执行</el-button>
     </div>
@@ -7,17 +7,32 @@
       ref="codeMirrorEditor"
       v-model="code"
       style="height: 60%"
-      class="php-codemirror codemirror-left-container"
+      class="php-codemirror code-editor-container"
       :options="cmOptions"
       @ready="onCodemirrorReady"
     />
-    <codemirror
-      v-model="resultSrc"
-      v-loading="loading"
-      style="height: 30%"
-      class="php-codemirror  codemirror-right-container"
-      :options="resultOptions"
-    />
+    <el-row style="height: 400px; padding-bottom: 50px">
+      <el-col :span="15" style="height: 100%">
+        <p>标准输出:</p>
+        <codemirror
+          v-model="stdOut"
+          v-loading="loading"
+          style="height: 100%"
+          class="php-codemirror std-out-container"
+          :options="resultOptions"
+        />
+      </el-col>
+      <el-col :offset="1" :span="8" style="height: 100%">
+        <p>标准出错:</p>
+        <codemirror
+          v-model="stdErr"
+          v-loading="loading"
+          style="height: 100%"
+          class="php-codemirror std-err-container"
+          :options="resultOptions"
+        />
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -38,8 +53,10 @@ export default {
   data() {
     return {
       loading: false,
-      code: '',
+      code: '<?php\r\n',
       resultSrc: '',
+      stdOut: '',
+      stdErr: '',
       phpExecutorConfig: {
         maxCodeLength: 1000
       },
@@ -96,10 +113,12 @@ export default {
         return
       }
       this.loading = true
-      this.resultSrc = ''
+      this.stdOut = ''
+      this.stdErr = ''
       executePhp(code).then(res => {
         const { data } = res
-        this.resultSrc = data
+        this.stdOut = data.stdOut
+        this.stdErr = data.stdErr
       }).catch(error => {
         const { code, message } = error
         switch (code) {
@@ -123,8 +142,7 @@ export default {
 
 <style>
 .php-tool-bar {
-  height: 49px;
-  line-height: 49px;
+  margin-bottom: 10px;
 }
 
 .php-codemirror {
@@ -142,13 +160,16 @@ export default {
   height: 100%;
 }
 
-.php-codemirror.codemirror-left-container {
-  border: 1px solid #333;
-  border-bottom: none;
+.php-codemirror.code-editor-container {
+  border: 1px solid #DCDEE2;
 }
 
-.php-codemirror.codemirror-right-container {
-  border: 1px solid #333;
+.php-codemirror.std-err-container {
+  border: 1px solid #DCDEE2;
+}
+
+.php-codemirror.std-out-container {
+  border: 1px solid #DCDEE2;
 }
 
 </style>

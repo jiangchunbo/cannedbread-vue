@@ -118,6 +118,19 @@ export const constantRoutes = [
   },
 
   {
+    path: '/yapi',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'Yapi',
+        component: () => import('@/views/yapi/index'),
+        meta: { title: 'YAPI', icon: 'yapi' }
+      }
+    ]
+  },
+
+  {
     path: '/example',
     component: Layout,
     redirect: '/example/table',

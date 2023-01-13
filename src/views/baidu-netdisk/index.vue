@@ -317,9 +317,14 @@ export default {
     },
     onClickPath(event) {
       const target = event.target.dataset['breadcrumbIndex']
-      let path = '/'
+      let path = ''
       for (let i = 1; i <= target; i++) {
         path += '/' + this.breadcrumbList[i]
+      }
+      console.log(path)
+      if (path === this.historyPathList[this.currentLocation]) {
+        this.refreshFileList(path)
+        return
       }
       this.refreshFileList(path).then(res => {
         this.pushHistoryPathList(path)
