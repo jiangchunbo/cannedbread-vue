@@ -1,17 +1,29 @@
 <template>
   <div class="heroic-expeditions-container">
-    <el-form>
+    <el-form inline size="mini" class="search-form">
       <el-form-item>
-        <el-select v-model="form.level" placeholder="请选择装备等级" clearable @change="onChangeLevel">
+        <el-select v-model="form.category" placeholder="请选择装备类型" clearable>
+          <el-option label="副武器" value="副武器" />
+          <el-option label="护具" value="护具" />
+          <el-option label="靴子" value="靴子" />
+          <el-option label="饰品" value="饰品" />
+          <el-option label="其他" value="其他" />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-select v-model="form.level" placeholder="请选择装备等级" clearable>
           <el-option label="等级: S" value="S" />
           <el-option label="等级: A" value="A" />
           <el-option label="等级: B" value="B" />
           <el-option label="等级: C" value="C" />
+          <el-option label="等级: D" value="D" />
+          <el-option label="等级: E" value="E" />
         </el-select>
       </el-form-item>
     </el-form>
     <el-table
       :data="filterEquipmentData"
+      height="calc(100% - 40px)"
     >
       <el-table-column
         prop="attribute"
@@ -54,19 +66,68 @@ export default {
     return {
       level: 'S',
       form: {
-        level: ''
+        level: null,
+        category: null
       },
       equipmentData: []
     }
   },
   computed: {
     filterEquipmentData() {
-      const search = this.form.level != null
+      const search =
+        this.form.level != null ||
+        this.form.category != null
       const level = this.form.level
-      console.log(search)
-      return this.equipmentData.filter(equipment => {
-        return !search || (equipment.level && equipment.level.indexOf(level) !== -1)
+      const category = this.form.category
+      const filterEquipmentData = this.equipmentData.filter(equipment => {
+        if (!search) {
+          return true
+        }
+        return (!level || (equipment.level && equipment.level !== '' && level && level !== '' && equipment.level.indexOf(level) !== -1)) &&
+          (!category || (equipment.category && equipment.category !== '' && category && category !== '' && equipment.category.indexOf(category) !== -1))
       })
+      filterEquipmentData.sort((e1, e2) => {
+        if (e1.level && e2.level) {
+          const quality1 = e1.level.substring(0, e1.level.indexOf('+') || e1.level.length)
+          const plus1 = e1.level.substring(e1.level.indexOf('+') || e1.level.length)
+          const quality2 = e2.level.substring(0, e2.level.indexOf('+') || e2.level.length)
+          const plus2 = e2.level.substring(e2.level.indexOf('+') || e2.level.length)
+          if (quality1 !== quality2) {
+            console.log(e1.name, quality1)
+            console.log(e2.name, quality2)
+            return quality1 < quality2 ? -1 : 1
+          }
+          if (plus1 !== plus2) {
+            return plus1 < plus2 ? -1 : 1
+          }
+        }
+        if (!e1.level || !e2.level) {
+          if (!e1.level) {
+            return 1
+          }
+          if (!e2.level) {
+            return -1
+          }
+        }
+        const orderedPrimeAttribute = {
+          '力量': 1,
+          '敏捷': 2,
+          '智力': 3
+        }
+        if (e1.primeAttribute && e2.primeAttribute) {
+          return orderedPrimeAttribute[e1.primeAttribute] - orderedPrimeAttribute[e2.primeAttribute]
+        }
+        if (!e1.primeAttribute || !e2.primeAttribute) {
+          if (!e1.primeAttribute) {
+            return 1
+          }
+          if (!e2.primeAttribute) {
+            return -1
+          }
+        }
+        return 0
+      })
+      return filterEquipmentData
     }
   },
   mounted() {
@@ -82,7 +143,7 @@ export default {
       })
     },
     onChangeLevel(level) {
-      this.$set(this.form, 'level', level)
+      // this.$set(this.form, 'level', level)
       console.log(this.form)
     }
   }
@@ -92,8 +153,12 @@ export default {
 <style lang="scss">
 .heroic-expeditions-container {
   height: 100%;
-  >.el-table{
-    height: calc(100% - 40px);
+
+  .search-form {
+    height: 40px;
+  }
+
+  > .el-table {
     overflow-y: auto;
   }
 }
