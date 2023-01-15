@@ -48,6 +48,9 @@ Vue.config.productionTip = false
 import axios from './utils/request'
 Vue.prototype.$axios = axios
 
+import axios2 from 'axios'
+Vue.prototype.$axios2 = axios2
+
 import VideoJs from 'video.js'
 import 'video.js/dist/video-js.css'
 

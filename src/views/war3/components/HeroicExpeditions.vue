@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="heroic-expeditions-container">
     <el-form>
       <el-form-item>
         <el-select v-model="form.level" placeholder="请选择装备等级" clearable @change="onChangeLevel">
@@ -89,6 +89,12 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style lang="scss">
+.heroic-expeditions-container {
+  height: 100%;
+  >.el-table{
+    height: calc(100% - 40px);
+    overflow-y: auto;
+  }
+}
 </style>
