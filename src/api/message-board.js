@@ -1,10 +1,24 @@
 import request from '@/utils/request'
 
-export function fetchMessageBoardList(params) {
+export function fetchBeforeMessage(params) {
   return request({
     url: '/message-board/message/list',
     method: 'get',
-    params
+    params: {
+      ...params,
+      direction: 'before'
+    }
+  })
+}
+
+export function fetchAfterMessage(params) {
+  return request({
+    url: '/message-board/message/list',
+    method: 'get',
+    params: {
+      ...params,
+      direction: 'after'
+    }
   })
 }
 

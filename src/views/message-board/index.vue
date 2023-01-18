@@ -1,7 +1,10 @@
 <template>
-  <el-row style="height: 100%; display: flex; flex-direction: column">
-    <el-col :offset="1" :span="22" class="message-list-container">
-      <el-timeline>
+  <div class="message-board-container">
+    <div class="message-list-container">
+      <el-timeline
+        ref="timeline"
+        v-infinite-scroll="loadMoreMessage"
+      >
         <el-timeline-item
           v-for="(value, index) in messageList"
           :key="index"
@@ -16,7 +19,7 @@
           </el-card>
         </el-timeline-item>
       </el-timeline>
-    </el-col>
+    </div>
     <el-form class="el-row message-input-form" inline>
       <el-form-item class="message-input">
         <el-input
@@ -30,19 +33,20 @@
         <el-button type="primary" @click="submitMessage(content)">提交</el-button>
       </el-form-item>
     </el-form>
-  </el-row>
+  </div>
 </template>
 
 <script>
-import { fetchMessageBoardList, sendMessage } from '@/api/message-board'
+import { fetchAfterMessage, fetchBeforeMessage, sendMessage } from '@/api/message-board'
 import { Message } from 'element-ui'
 
 export default {
   name: 'MessageBoard',
-  components: {
-  },
+  components: {},
   data() {
     return {
+      loading: false,
+      noMore: false,
       messageList: [],
       mode: 'simple',
       content: '',
@@ -57,71 +61,154 @@ export default {
     editor.destroy() // 组件销毁时，及时销毁编辑器
   },
   methods: {
-    timeoutRefreshMessageList() {
-      this.refreshMessageList().then(res => {
+    timeoutFetchNewMessage() {
+      this.loadNewMessage().then(res => {
         const { data } = res
         const additionalList = data
+        console.log('新元素数量', additionalList.length)
+        // 旧元素滚动下去
         if (additionalList.length > 0) {
           this.messageList.unshift(...additionalList)
         }
-        this.$nextTick(() => {
+        this.$nextTick().then(() => {
+          // 先计算出所有的新增的门店
           for (let i = 0; i < additionalList.length; i++) {
+            this.$refs[`messageItem${i}`][0].$el.style.transition = 'all 0s'
+            this.$refs[`messageItem${i}`][0].$el.style.transform = 'scaleY(0)'
+            this.$refs[`messageItem${i}`][0].$el.style.position = 'absolute'
+            let top = 0
             if (i > 0) {
               const prevIndex = i - 1
-              const top = this.$refs[`messageItem${prevIndex}`][0].$el.offsetHeight + this.messageList[prevIndex].styleTop ?? 0
-              this.$refs[`messageItem${i}`][0].$el.style.top = top + 'px'
-              this.messageList[i].styleTop = top
-            } else {
-              this.messageList[i].styleTop = 0
+              top = this.$refs[`messageItem${prevIndex}`][0].$el.offsetHeight + this.messageList[prevIndex].styleTop || 0
             }
+            this.$refs[`messageItem${i}`][0].$el.style.top = top + 'px'
+            this.messageList[i].styleTop = top
+            console.log(top)
           }
-          // 旧元素滚动下去
+          // 旧元素依然保持位置
           for (let i = additionalList.length; i < this.messageList.length; i++) {
-            if (i > 0) {
+            this.$refs[`messageItem${i}`][0].$el.style.transition = ''
+            this.$refs[`messageItem${i}`][0].$el.style.position = 'absolute'
+            let top = 0
+            if (i > additionalList.length) {
               const prevIndex = i - 1
-              const top = this.$refs[`messageItem${prevIndex}`][0].$el.offsetHeight + this.messageList[prevIndex].styleTop ?? 0
-              this.$refs[`messageItem${i}`][0].$el.style.top = top + 'px'
-              this.$refs[`messageItem${i}`][0].$el.style.transition = '0.3s'
-              this.messageList[i].styleTop = top
+              top = this.$refs[`messageItem${prevIndex}`][0].$el.offsetHeight + this.messageList[prevIndex].styleTop || 0
+            }
+            this.$refs[`messageItem${i}`][0].$el.style.top = top + 'px'
+            this.messageList[i].styleTop = top
+          }
+        }).then(() => {
+          for (let i = 0; i < this.messageList.length; i++) {
+            if (i < additionalList.length) {
+              this.$refs[`messageItem${i}`][0].$el.style.transition = 'all 0.6s'
+              this.$refs[`messageItem${i}`][0].$el.style.transform = 'scaleY(1)'
+              this.$refs[`messageItem${i}`][0].$el.style.transformOrigin = 'center top'
             } else {
-              this.messageList[i].styleTop = 0
+              this.$refs[`messageItem${i}`][0].$el.style.transition = '0.3s'
+              let top = 0
+              if (i > 0) {
+                const prevIndex = i - 1
+                top = this.$refs[`messageItem${prevIndex}`][0].$el.offsetHeight + this.messageList[prevIndex].styleTop || 0
+              }
+              this.$refs[`messageItem${i}`][0].$el.style.top = top + 'px'
+              this.messageList[i].styleTop = top
             }
           }
-          this.timer = setTimeout(this.timeoutRefreshMessageList, 1000)
+        }).then(() => {
+          setTimeout(() => {
+            this.timeoutFetchNewMessage()
+          }, 1000)
         })
       })
     },
-    refreshMessageList() {
+    loadMoreMessage() {
+      if (this.noMore) {
+        return
+      }
+      this.loading = true
+      let promise
       if (this.messageList.length > 0) {
-        const first = this.messageList[0]
-        return fetchMessageBoardList({
-          minSendTime: first.sendDateTime,
-          previousId: first.id
-        }).then(res => {
-          return res
+        const last = this.messageList[this.messageList.length - 1]
+        promise = fetchBeforeMessage({
+          sendTime: last.sendDateTime,
+          id: last.id
         })
       } else {
-        return fetchMessageBoardList().then(res => {
-          return res
-        })
+        promise = fetchBeforeMessage()
       }
+      return promise.then((res) => {
+        this.loading = false
+        const { data } = res
+        if (data.length > 0) {
+          this.messageList.push(...data)
+        } else {
+          this.noMore = true
+        }
+      }).then(() => {
+        // load more message 不进行动画，立即追加
+        this.$nextTick(() => {
+          for (let i = 0; i < this.messageList.length; i++) {
+            let top = 0
+            if (i > 0) {
+              const prevIndex = i - 1
+              top = this.$refs[`messageItem${prevIndex}`][0].$el.offsetHeight + this.messageList[prevIndex].styleTop || 0
+            }
+            this.$refs[`messageItem${i}`][0].$el.style.top = top + 'px'
+            this.messageList[i].styleTop = top
+          }
+        })
+      })
     },
     submitMessage(content) {
       if (content.trim().length === 0) {
         Message.warning({
           message: '不能发送空白消息'
         })
+        return
       }
       sendMessage(content).then(() => {
         clearTimeout(this.timer)
-        this.timeoutRefreshMessageList()
+        this.timeoutFetchNewMessage()
         this.content = ''
       })
+    },
+    loadNewMessage() {
+      if (this.messageList.length > 0) {
+        const first = this.messageList[0]
+        return fetchAfterMessage({
+          sendTime: first.sendDateTime,
+          id: first.id
+        }).then(res => {
+          return res
+        })
+      } else {
+        return fetchBeforeMessage().then(res => {
+          return res
+        })
+      }
     }
   },
   beforeRouteEnter(to, from, next) {
-    next(vm => {
-      vm.timeoutRefreshMessageList()
+    next(async vm => {
+      if (vm.messageList.length > 0) {
+        return
+      }
+      await fetchBeforeMessage().then((res) => {
+        const { data } = res
+        vm.messageList = data
+      }).then(() => {
+        vm.$nextTick(() => {
+          for (let i = 0; i < vm.messageList.length; i++) {
+            let top = 0
+            if (i > 0) {
+              const prevIndex = i - 1
+              top = vm.$refs[`messageItem${prevIndex}`][0].$el.offsetHeight + vm.messageList[prevIndex].styleTop || 0
+            }
+            vm.$refs[`messageItem${i}`][0].$el.style.top = top + 'px'
+            vm.messageList[i].styleTop = top
+          }
+        })
+      })
     })
   },
   beforeRouteLeave(to, from, next) {
@@ -133,34 +220,53 @@ export default {
 
 <style src="@wangeditor/editor/dist/css/style.css"></style>
 <style lang="scss">
-.message-list-container {
-  flex: 1;
-  position: relative;
-  padding-top: 20px;
+.message-board-container {
+  height: 100%;
 
+  .message-list-container {
+    flex-direction: column;
+    height: calc(100% - 61px);
+    width: calc(100% + 20px);
+    position: relative;
+    padding-left: 20px;
+
+    .el-timeline {
+      height: 100%;
+    }
+  }
+
+  .message-input-form {
+    height: 60px;
+    display: flex;
+    flex-direction: row;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 10px 20px 10px 20px;
+    border-top: 1px solid #eee;
+    background: #fff;
+  }
+}
+
+.message-list-container {
   .el-timeline {
     position: relative;
-    height: 100%;
     overflow-y: auto;
 
     .message-item {
+      padding: 10px 0;
       position: absolute;
       left: 1px;
       right: 0;
       white-space: pre-line;
+
+      .el-timeline-item__content {
+        margin-right: 40px;
+      }
     }
   }
 }
 
 .message-input-form {
-  display: flex;
-  flex-direction: row;
-  margin-left: 0;
-  margin-right: 0;
-  padding: 10px 20px 10px 20px;
-  border-top: 1px solid #eee;
-  background: #fff;
-
   .el-form-item {
     margin-bottom: 0;
   }
@@ -170,6 +276,8 @@ export default {
     align-self: flex-end;
 
     textarea {
+      /* Firefox 隐藏滚动条 */
+      scrollbar-width: none;
       box-sizing: border-box;
       font-size: 18px;
       font-family: 'Noto Serif SC', monospace;
@@ -198,3 +306,4 @@ export default {
   margin-bottom: 0 !important;
 }
 </style>
+

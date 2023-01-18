@@ -54,3 +54,10 @@ export default {
   }
 }
 </script>
+
+<style>
+.sidebar-container {
+  box-shadow: 4px 2px 6px rgb(198 228 233 / 50%), -1px 0px 5px rgb(198 228 233 / 40%);
+  background-image: linear-gradient(145deg, rgba(206,233,254,0.4) 0%, rgba(184,192,189,0.3) 25%, rgba(174, 183, 169, 0.09) 75%, rgba(205, 220, 226, 0.4) 100%), linear-gradient(240deg, rgba(0,0,0,0) 30%, rgba(184,192,189,0.1) 48%, rgba(214, 224, 228, 0.13) 54%, rgba(174,183,169,0.2) 60%, rgba(0,0,0,0) 80%);
+}
+</style>
