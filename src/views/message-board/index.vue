@@ -45,6 +45,7 @@ export default {
   components: {},
   data() {
     return {
+      loadingNew: false,
       loading: false,
       noMore: false,
       messageList: [],
@@ -62,10 +63,13 @@ export default {
   },
   methods: {
     timeoutFetchNewMessage() {
+      if (this.loadingNew) {
+        return
+      }
+      this.loadingNew = true
       this.loadNewMessage().then(res => {
         const { data } = res
         const additionalList = data
-        console.log('新元素数量', additionalList.length)
         // 旧元素滚动下去
         if (additionalList.length > 0) {
           this.messageList.unshift(...additionalList)
@@ -115,13 +119,17 @@ export default {
             }
           }
         }).then(() => {
-          setTimeout(() => {
+          this.loadingNew = false
+          this.timer = setTimeout(() => {
             this.timeoutFetchNewMessage()
           }, 1000)
         })
       })
     },
     loadMoreMessage() {
+      if (this.loading) {
+        return
+      }
       if (this.noMore) {
         return
       }
@@ -193,10 +201,14 @@ export default {
       if (vm.messageList.length > 0) {
         return
       }
+      vm.loading = true
       await fetchBeforeMessage().then((res) => {
         const { data } = res
+        vm.loading = false
         vm.messageList = data
-      }).then(() => {
+        if (data.length === 0) {
+          vm.noMore = true
+        }
         vm.$nextTick(() => {
           for (let i = 0; i < vm.messageList.length; i++) {
             let top = 0
@@ -208,6 +220,7 @@ export default {
             vm.messageList[i].styleTop = top
           }
         })
+        this.timeoutFetchNewMessage()
       })
     })
   },

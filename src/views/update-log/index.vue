@@ -39,6 +39,10 @@ export default {
 </script>
 
 <style>
+.update-log-container {
+  height: 100%;
+  overflow-y: auto;
+}
 .update-log-container ul {
   padding-left: 0;
 }

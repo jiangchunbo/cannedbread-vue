@@ -2,7 +2,7 @@
   <div class="heroic-expeditions-container">
     <el-form inline size="mini" class="search-form">
       <el-form-item>
-        <el-select v-model="form.category" placeholder="请选择装备类型" clearable>
+        <el-select v-model="form.category" style="width: 150px" placeholder="装备类型" clearable>
           <el-option label="副武器" value="副武器" />
           <el-option label="护具" value="护具" />
           <el-option label="靴子" value="靴子" />
@@ -11,7 +11,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-select v-model="form.level" placeholder="请选择装备等级" clearable>
+        <el-select v-model="form.level" style="width: 150px" placeholder="装备等级" clearable>
           <el-option label="等级: S" value="S" />
           <el-option label="等级: A" value="A" />
           <el-option label="等级: B" value="B" />
@@ -23,7 +23,7 @@
     </el-form>
     <el-table
       :data="filterEquipmentData"
-      height="calc(100% - 40px)"
+      max-height="calc(100% - 60px)"
     >
       <el-table-column
         prop="attribute"
@@ -66,8 +66,8 @@ export default {
     return {
       level: 'S',
       form: {
-        level: null,
-        category: null
+        level: 'S',
+        category: '副武器'
       },
       equipmentData: []
     }
@@ -158,7 +158,11 @@ export default {
     height: 40px;
   }
 
-  > .el-table {
+  .el-table {
+    overflow-y: auto;
+  }
+
+  .el-table>.el-table__body-wrapper {
     overflow-y: auto;
   }
 }
