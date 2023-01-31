@@ -5,6 +5,7 @@ import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import { getToken } from '@/utils/auth' // get token from cookie
 import getPageTitle from '@/utils/get-page-title'
+import Layout from '@/layout'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
@@ -33,6 +34,11 @@ router.beforeEach(async(to, from, next) => {
         try {
           // get user info
           await store.dispatch('user/getInfo')
+          const routes = store.getters.routes
+          console.log(store.getters.avatar)
+          console.log(store.getters)
+          buildRoutes(routes)
+          router.addRoutes(routes)
           next()
         } catch (error) {
           // remove token and go to login page to re-login
@@ -57,6 +63,26 @@ router.beforeEach(async(to, from, next) => {
     }
   }
 })
+
+
+const loadedComponent = {};
+
+function buildRoutes(routes) {
+  console.log(routes)
+  routes.forEach(route => {
+    if (route.component) {
+      if (loadedComponent[route.component]) {
+        route.component = loadedComponent[route.component]
+      } else {
+        route.component = require(route.component)
+      }
+    }
+    if (route.children && route.children.length) {
+      buildRoutes(route.children)
+    }
+  })
+  console.log(routes)
+}
 
 router.afterEach(() => {
   // finish progress bar

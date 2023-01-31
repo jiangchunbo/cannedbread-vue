@@ -165,7 +165,7 @@ export default {
       if (Cookies.get('loginRequireCode') !== undefined) {
         this.showVerificationCodeInput = true
       }
-      this.$refs.loginForm.validate(valid => {
+      this.$refs['loginForm'].validate(valid => {
         if (valid) {
           this.loading = true
           this.usernameError = ''
@@ -209,7 +209,7 @@ export default {
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
-      vm.showVerificationCodeInput = Cookies.get('loginRequireCode') !== undefined;vm
+      vm.showVerificationCodeInput = Cookies.get('loginRequireCode') !== undefined
       vm.loginForm.code = ''
     })
   }
