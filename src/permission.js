@@ -1,4 +1,4 @@
-import router from './router'
+import router, { constantRoutes, resetRouter } from './router'
 import store from './store'
 import { Message } from 'element-ui'
 import NProgress from 'nprogress' // progress bar
@@ -11,7 +11,7 @@ NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 const whiteList = ['/login'] // no redirect whitelist
 
-router.beforeEach(async(to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   // start progress bar
   NProgress.start()
 
@@ -34,11 +34,15 @@ router.beforeEach(async(to, from, next) => {
         try {
           // get user info
           await store.dispatch('user/getInfo')
-          const routes = store.getters.routes
-          console.log(store.getters.avatar)
-          console.log(store.getters)
-          buildRoutes(routes)
-          router.addRoutes(routes)
+          const routes = store.getters.asyncRoutes
+          store.commit('user/SET_ASYNC_ROUTES', buildRoutes(routes, null))
+          console.log('构造之后', store.getters.asyncRoutes)
+          resetRouter()
+          const newRoutes = constantRoutes.slice(0)
+          newRoutes.splice(-1, 0, ...store.getters.asyncRoutes);
+          router.addRoutes(store.getters.asyncRoutes)
+          store.commit('user/SET_ASYNC_ROUTES', newRoutes)
+          
           next()
         } catch (error) {
           // remove token and go to login page to re-login
@@ -65,23 +69,25 @@ router.beforeEach(async(to, from, next) => {
 })
 
 
-const loadedComponent = {};
-
-function buildRoutes(routes) {
-  console.log(routes)
+export function buildRoutes(routes, parent) {
+  const newRoutes = []
   routes.forEach(route => {
-    if (route.component) {
-      if (loadedComponent[route.component]) {
-        route.component = loadedComponent[route.component]
-      } else {
-        route.component = require(route.component)
-      }
+    const newRoute = {}
+    Object.assign(newRoute, route)
+    if (route.component === 'Layout') {
+      newRoute.component = Layout
+    } else if (route.component) {
+      newRoute.component = (resolve) => require([`./views/${route.component}/index.vue`], resolve)
     }
-    if (route.children && route.children.length) {
-      buildRoutes(route.children)
+    if (route.children && route.children.length > 0) {
+      buildRoutes(route.children, newRoute)
     }
+    newRoutes.push(newRoute)
   })
-  console.log(routes)
+  if (parent) {
+    parent.children = newRoutes
+  }
+  return newRoutes
 }
 
 router.afterEach(() => {

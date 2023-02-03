@@ -7,7 +7,7 @@ const getDefaultState = () => {
     token: getToken(),
     name: '',
     avatar: '',
-    routes: []
+    asyncRoutes: []
   }
 }
 
@@ -26,8 +26,8 @@ const mutations = {
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
   },
-  SET_ROUTES: (state, routes) => {
-    state.routes = routes
+  SET_ASYNC_ROUTES: (state, asyncRoutes) => {
+    state.asyncRoutes = asyncRoutes
   }
 }
 
@@ -60,7 +60,7 @@ const actions = {
 
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
-        commit('SET_ROUTES', routes)
+        commit('SET_ASYNC_ROUTES', routes)
         resolve(data)
       }).catch(error => {
         reject(error)

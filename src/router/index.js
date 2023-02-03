@@ -54,6 +54,18 @@ export const constantRoutes = [
       meta: { title: '仪表盘', icon: 'dashboard' }
     }]
   },
+  {
+    path: "/menus",
+    component: Layout,
+    children: [
+      {
+        path: "index",
+        name: "Menus",
+        component: () => import("@/views/menus/index"),
+        meta: { title: "菜单配置", icon: "menus" }
+      }
+    ]
+  },
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
