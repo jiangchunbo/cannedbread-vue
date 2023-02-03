@@ -18,12 +18,13 @@
           <el-option label="等级: C" value="C" />
           <el-option label="等级: D" value="D" />
           <el-option label="等级: E" value="E" />
+          <el-option label="等级: F" value="F" />
         </el-select>
       </el-form-item>
     </el-form>
     <el-table
       :data="filterEquipmentData"
-      max-height="calc(100% - 60px)"
+      height="calc(100% - 60px)"
     >
       <el-table-column
         prop="attribute"
@@ -33,7 +34,7 @@
         <template slot-scope="scope">
           <el-image
             style="width: 250px;"
-            :src="scope.row.attribute"
+            :src="`https://jiangchunbo-1302516612.cos.ap-shanghai.myqcloud.com/war3/英雄的远征/${scope.row.name}-属性.png`"
             :preview-src-list="[scope.row.attribute]"
           />
         </template>
@@ -41,7 +42,7 @@
       <el-table-column
         prop="combinationRule"
         label="获取方式"
-        width="300"
+        width="500"
       >
         <template slot-scope="scope">
           <el-image
@@ -50,7 +51,7 @@
             :src="scope.row.combinationRule"
             :preview-src-list="[scope.row.combinationRule]"
           />
-          <span v-else>{{ scope.row.combinationRule }}</span>
+          <span style="white-space: pre-line" v-else>{{ scope.row.combinationRule }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -87,18 +88,33 @@ export default {
           (!category || (equipment.category && equipment.category !== '' && category && category !== '' && equipment.category.indexOf(category) !== -1))
       })
       filterEquipmentData.sort((e1, e2) => {
-        if (e1.level && e2.level) {
-          const quality1 = e1.level.substring(0, e1.level.indexOf('+') || e1.level.length)
-          const plus1 = e1.level.substring(e1.level.indexOf('+') || e1.level.length)
-          const quality2 = e2.level.substring(0, e2.level.indexOf('+') || e2.level.length)
-          const plus2 = e2.level.substring(e2.level.indexOf('+') || e2.level.length)
-          if (quality1 !== quality2) {
-            console.log(e1.name, quality1)
-            console.log(e2.name, quality2)
-            return quality1 < quality2 ? -1 : 1
+        function getScore(suffix) {
+          let score = 0
+          for (let i = 0; i < suffix.length; i++) {
+            switch (suffix[i]) {
+              case '+':
+                score++
+                break
+              case '-':
+                score--
+                break
+            }
           }
-          if (plus1 !== plus2) {
-            return plus1 < plus2 ? -1 : 1
+          return score
+        }
+
+        if (e1.level && e2.level) {
+          const match1 = e1.level.match(/([SABCDEF]+)([+-]*)/)
+          const match2 = e2.level.match(/([SABCDEF]+)([+-]*)/)
+          const quality1 = match1[1]
+          const quality2 = match2[1]
+          const score1 = getScore(match1[2])
+          const score2 = getScore(match2[2])
+          if (quality1 !== quality2) {
+            return quality1 < quality2 ? 1 : -1
+          }
+          if (score1 !== score2) {
+            return score2 - score1
           }
         }
         if (!e1.level || !e2.level) {
@@ -162,7 +178,7 @@ export default {
     overflow-y: auto;
   }
 
-  .el-table>.el-table__body-wrapper {
+  .el-table > .el-table__body-wrapper {
     overflow-y: auto;
   }
 }
