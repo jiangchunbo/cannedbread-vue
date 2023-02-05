@@ -79,6 +79,13 @@
       border: none;
       height: 100%;
       width: 100% !important;
+      background-color: transparent;
+
+      .el-menu-item:focus,
+      .el-menu-item:hover,
+      .router-link-active {
+        background: $menuHover;
+      }
     }
 
     // menu hover

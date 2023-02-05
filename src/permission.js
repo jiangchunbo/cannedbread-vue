@@ -42,8 +42,12 @@ router.beforeEach(async (to, from, next) => {
           newRoutes.splice(-1, 0, ...store.getters.asyncRoutes);
           router.addRoutes(store.getters.asyncRoutes)
           store.commit('user/SET_ASYNC_ROUTES', newRoutes)
-          
-          next()
+
+          if (to.redirectedFrom) {
+            router.replace(to.redirectedFrom);
+          } else {
+            next()
+          }
         } catch (error) {
           // remove token and go to login page to re-login
           await store.dispatch('user/resetToken')
@@ -89,6 +93,7 @@ export function buildRoutes(routes, parent) {
   }
   return newRoutes
 }
+
 
 router.afterEach(() => {
   // finish progress bar

@@ -34,7 +34,7 @@
         <template slot-scope="scope">
           <el-image
             style="width: 250px;"
-            :src="`https://jiangchunbo-1302516612.cos.ap-shanghai.myqcloud.com/war3/英雄的远征/${scope.row.name}-属性.png`"
+            :src="`https://jiangchunbo-1302516612.cos.ap-shanghai.myqcloud.com/war3/英雄的远征/${scope.row.category}/${scope.row.name}/属性.png`"
             :preview-src-list="[scope.row.attribute]"
           />
         </template>
@@ -48,8 +48,8 @@
           <el-image
             v-if="scope.row.combinationRuleFormat === 'url'"
             style="width: 250px;"
-            :src="scope.row.combinationRule"
-            :preview-src-list="[scope.row.combinationRule]"
+            :src="`https://jiangchunbo-1302516612.cos.ap-shanghai.myqcloud.com/war3/英雄的远征/${scope.row.category}/${scope.row.name}/获取方式.png`"
+            :preview-src-list="[`https://jiangchunbo-1302516612.cos.ap-shanghai.myqcloud.com/war3/英雄的远征/${scope.row.category}/${scope.row.name}/获取方式.png`]"
           />
           <span style="white-space: pre-line" v-else>{{ scope.row.combinationRule }}</span>
         </template>

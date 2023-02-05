@@ -11,11 +11,6 @@
       @check-change="onCheckChange"
     >
     </el-tree>
-    <el-form size="small">
-      <el-form-item>
-        <el-button type="primary" @click="onClickSave">保存</el-button>
-      </el-form-item>
-    </el-form>
   </div>
 </template>
   
