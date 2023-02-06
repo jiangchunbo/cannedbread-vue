@@ -47,12 +47,9 @@ export default {
       this.saveMenusConfig(routeNames);
     },
     onCheckChange(node, checked) {
-      console.log(node);
+      console.log(JSON.stringify(this.getCheckedNodes().map(item => item.id)));
       if (checked) {
-        setMenusVisible({
-          menuNames: this.getCheckedNodes(),
-          visible: true,
-        }).then((res) => {
+        setMenusVisible(JSON.stringify(this.getCheckedNodes().map(item => item.id))).then((res) => {
           const { data } = res;
           const newRoutes = constantRoutes.slice(0)
           newRoutes.splice(-1, 0, ...buildRoutes(data));
@@ -60,10 +57,7 @@ export default {
           this.$store.commit("user/SET_ASYNC_ROUTES", newRoutes);
         });
       } else {
-        setMenusVisible({
-          menuNames: this.getCheckedNodes(),
-          visible: false,
-        }).then((res) => {
+        setMenusVisible(JSON.stringify(this.getCheckedNodes().map(item => item.id))).then((res) => {
           const { data } = res;
           const newRoutes = constantRoutes.slice(0)
           newRoutes.splice(-1, 0, ...buildRoutes(data));

@@ -17,10 +17,13 @@ export function saveMyMenusConfig(data) {
 }
 
 
-export function setMenusVisible(params) {
+export function setMenusVisible(data) {
     return request({
         url: '/menus/visible/set',
         method: 'post',
-        params
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        data
     })
 }

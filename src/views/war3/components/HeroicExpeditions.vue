@@ -19,6 +19,7 @@
           <el-option label="等级: D" value="D" />
           <el-option label="等级: E" value="E" />
           <el-option label="等级: F" value="F" />
+          <el-option label="等级: G" value="G" />
         </el-select>
       </el-form-item>
     </el-form>
@@ -29,13 +30,13 @@
       <el-table-column
         prop="attribute"
         label="装备"
-        width="300"
+        width="400"
       >
         <template slot-scope="scope">
           <el-image
-            style="width: 250px;"
+            style="width: 350px;"
             :src="`https://jiangchunbo-1302516612.cos.ap-shanghai.myqcloud.com/war3/英雄的远征/${scope.row.category}/${scope.row.name}/属性.png`"
-            :preview-src-list="[scope.row.attribute]"
+            :preview-src-list="[`https://jiangchunbo-1302516612.cos.ap-shanghai.myqcloud.com/war3/英雄的远征/${scope.row.category}/${scope.row.name}/属性.png`]"
           />
         </template>
       </el-table-column>
@@ -47,7 +48,7 @@
         <template slot-scope="scope">
           <el-image
             v-if="scope.row.combinationRuleFormat === 'url'"
-            style="width: 250px;"
+            style="width: 350px;"
             :src="`https://jiangchunbo-1302516612.cos.ap-shanghai.myqcloud.com/war3/英雄的远征/${scope.row.category}/${scope.row.name}/获取方式.png`"
             :preview-src-list="[`https://jiangchunbo-1302516612.cos.ap-shanghai.myqcloud.com/war3/英雄的远征/${scope.row.category}/${scope.row.name}/获取方式.png`]"
           />
@@ -104,8 +105,8 @@ export default {
         }
 
         if (e1.level && e2.level) {
-          const match1 = e1.level.match(/([SABCDEF]+)([+-]*)/)
-          const match2 = e2.level.match(/([SABCDEF]+)([+-]*)/)
+          const match1 = e1.level.match(/([SABCDEFG]+)([+-]*)/)
+          const match2 = e2.level.match(/([SABCDEFG]+)([+-]*)/)
           const quality1 = match1[1]
           const quality2 = match2[1]
           const score1 = getScore(match1[2])
