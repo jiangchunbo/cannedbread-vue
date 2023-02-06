@@ -50,24 +50,24 @@ export default {
       console.log(node);
       if (checked) {
         setMenusVisible({
-          menuName: node.id,
-          visible: checked,
+          menuNames: this.getCheckedNodes(),
+          visible: true,
         }).then((res) => {
           const { data } = res;
-          const routes = [data];
-          const newRoutes = this.$store.getters.asyncRoutes.slice(0);
-          newRoutes.splice(-1, 0, ...buildRoutes(routes));
+          const newRoutes = constantRoutes.slice(0)
+          newRoutes.splice(-1, 0, ...buildRoutes(data));
           this.$router.addRoutes(newRoutes);
           this.$store.commit("user/SET_ASYNC_ROUTES", newRoutes);
         });
       } else {
         setMenusVisible({
-          menuName: node.id,
-          visible: checked,
+          menuNames: this.getCheckedNodes(),
+          visible: false,
         }).then((res) => {
-          const newRoutes = this.$store.getters.asyncRoutes.filter((item) => {
-            return item.name !== node.id;
-          });
+          const { data } = res;
+          const newRoutes = constantRoutes.slice(0)
+          newRoutes.splice(-1, 0, ...buildRoutes(data));
+          this.$router.addRoutes(newRoutes);
           this.$store.commit("user/SET_ASYNC_ROUTES", newRoutes);
         });
       }
@@ -77,7 +77,6 @@ export default {
     listMyMenusConfig().then((res) => {
       const { data } = res;
       this.menus = data.routeList;
-      console.log(data.checkedKeys);
       this.checkedKeys = data.checkedKeys;
     });
   },

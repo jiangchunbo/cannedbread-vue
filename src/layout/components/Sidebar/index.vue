@@ -33,7 +33,7 @@ export default {
   computed: {
     ...mapGetters(["sidebar"]),
     routes() {
-      console.log('重新计算路由', this.$router.options.routes)
+      console.log('重新计算路由', this.$store.state.user.asyncRoutes)
       // return this.$router.options.routes;
       return this.$store.state.user.asyncRoutes
     },

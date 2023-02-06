@@ -56,11 +56,11 @@ const actions = {
           return reject('Verification failed, please Login again.')
         }
 
-        const { name, avatar, routes } = data
+        const { name, avatar, asyncRoutes } = data
 
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
-        commit('SET_ASYNC_ROUTES', routes)
+        commit('SET_ASYNC_ROUTES', asyncRoutes)
         resolve(data)
       }).catch(error => {
         reject(error)
