@@ -8,7 +8,7 @@ import router from '../router'
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   withCredentials: true, // send cookies when cross-domain requests
-  timeout: 1000 // request timeout
+  timeout: 2000 // request timeout
 })
 
 // request interceptor
@@ -64,11 +64,11 @@ service.interceptors.response.use(
         }).then(() => {
           store.dispatch('user/resetToken').then(() => {
             const path = router.currentRoute.path
-            console.log(path)
             router.push({ path: `/login?redirect=${path}` })
             // location.reload()
           })
         })
+        return Promise.resolve()
       }
       const error = new Error(res.message)
       error.code = res.code

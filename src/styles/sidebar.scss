@@ -84,6 +84,7 @@
       .el-menu-item:focus,
       .el-menu-item:hover,
       .router-link-active {
+        color: $menuActiveText !important;
         background: $menuHover;
       }
     }

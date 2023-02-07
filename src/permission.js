@@ -34,14 +34,10 @@ router.beforeEach(async (to, from, next) => {
         try {
           // get user info
           await store.dispatch('user/getInfo')
-          const routes = store.getters.asyncRoutes
-          store.commit('user/SET_ASYNC_ROUTES', buildRoutes(routes, null))
-          console.log('构造之后', store.getters.asyncRoutes)
+          const asyncRoutes = buildRoutes(store.getters.asyncRoutes, null)
           resetRouter()
-          const newRoutes = constantRoutes.slice(0)
-          newRoutes.splice(-1, 0, ...store.getters.asyncRoutes);
-          router.addRoutes(store.getters.asyncRoutes)
-          store.commit('user/SET_ASYNC_ROUTES', newRoutes)
+          router.addRoutes(asyncRoutes)
+          store.commit('user/SET_ASYNC_ROUTES', asyncRoutes)
 
           if (to.redirectedFrom) {
             router.replace(to.redirectedFrom);

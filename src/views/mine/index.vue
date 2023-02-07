@@ -113,7 +113,7 @@ export default {
           // 服务端其他语言参考 COS STS SDK ：https://github.com/tencentyun/qcloud-cos-sts-sdk
           // STS 详细文档指引看：https://cloud.tencent.com/document/product/436/14048
 
-          const url = 'http://112.124.1.100:8000/TencentCloud/getTempSign' // url 替换成您自己的后端服务
+          const url = 'http://jiangchunbo.com/TencentCloud/getTempSign.php' // url 替换成您自己的后端服务
           const xhr = new XMLHttpRequest()
           xhr.open('GET', url, true)
           xhr.onload = function(e) {

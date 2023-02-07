@@ -55,6 +55,15 @@
           <span style="white-space: pre-line" v-else>{{ scope.row.combinationRule }}</span>
         </template>
       </el-table-column>
+      <el-table-column
+        prop="combinationRule"
+        label="备注"
+        width="300"
+      >
+        <template slot-scope="scope">
+          {{ scope.row.remark }}
+        </template>
+      </el-table-column>
     </el-table>
   </div>
 </template>

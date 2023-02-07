@@ -21,7 +21,7 @@ import {
   setMenusVisible,
 } from "@/api/menus";
 import { buildRoutes } from "@/permission";
-import { constantRoutes } from "@/router";
+import { constantRoutes, resetRouter } from "@/router";
 
 export default {
   name: "Menus",
@@ -51,16 +51,16 @@ export default {
       if (checked) {
         setMenusVisible(JSON.stringify(this.getCheckedNodes().map(item => item.id))).then((res) => {
           const { data } = res;
-          const newRoutes = constantRoutes.slice(0)
-          newRoutes.splice(-1, 0, ...buildRoutes(data));
+          resetRouter()
+          const newRoutes = buildRoutes(data)
           this.$router.addRoutes(newRoutes);
           this.$store.commit("user/SET_ASYNC_ROUTES", newRoutes);
         });
       } else {
         setMenusVisible(JSON.stringify(this.getCheckedNodes().map(item => item.id))).then((res) => {
           const { data } = res;
-          const newRoutes = constantRoutes.slice(0)
-          newRoutes.splice(-1, 0, ...buildRoutes(data));
+          resetRouter()
+          const newRoutes = buildRoutes(data)
           this.$router.addRoutes(newRoutes);
           this.$store.commit("user/SET_ASYNC_ROUTES", newRoutes);
         });

@@ -8,7 +8,6 @@
       auto-complete="on"
       label-position="left"
     >
-
       <div class="title-container">
         <h3 class="title">登录</h3>
       </div>
@@ -44,7 +43,9 @@
           @keyup.enter.native="handleLogin"
         />
         <span class="show-pwd" @click="showPwd">
-          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+          <svg-icon
+            :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
+          />
         </span>
       </el-form-item>
 
@@ -74,146 +75,160 @@
       <el-button
         :loading="loading"
         type="primary"
-        style="width:100%;margin-top: 5px; margin-bottom:30px;"
+        style="width: 100%; margin-top: 5px; margin-bottom: 30px"
         @click.native.prevent="handleLogin"
       >
         登录
       </el-button>
 
       <div class="tips">
-        <span style="margin-right:20px;" />
+        <span style="margin-right: 20px" />
       </div>
-
     </el-form>
   </div>
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
-import Cookies from 'js-cookie'
+import { validUsername } from "@/utils/validate";
+import Cookies from "js-cookie";
 
 export default {
-  name: 'Login',
+  name: "Login",
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
-        callback(new Error('用户名不能为空'))
+        callback(new Error("用户名不能为空"));
       } else {
-        callback()
+        callback();
       }
-    }
+    };
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('密码长度不能小于 6 位'))
+        callback(new Error("密码长度不能小于 6 位"));
       } else {
-        callback()
+        callback();
       }
-    }
+    };
     const validateVerificationCode = (rule, value, callback) => {
       if (this.showVerificationCodeInput && value.length === 0) {
-        callback(new Error('请输入验证码'))
+        callback(new Error("请输入验证码"));
       } else {
-        callback()
+        callback();
       }
-    }
+    };
     return {
       loginForm: {
-        username: '',
-        password: '',
-        code: ''
+        username: "",
+        password: "",
+        code: "",
       },
       showVerificationCodeInput: false,
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }],
-        code: [{
-          required: this.showVerificationCodeInput,
-          trigger: 'blur',
-          validator: validateVerificationCode
-        }]
+        username: [
+          { required: true, trigger: "blur", validator: validateUsername },
+        ],
+        password: [
+          { required: true, trigger: "blur", validator: validatePassword },
+        ],
+        code: [
+          {
+            required: this.showVerificationCodeInput,
+            trigger: "blur",
+            validator: validateVerificationCode,
+          },
+        ],
       },
-      usernameError: '',
-      passwordError: '',
-      verificationCodeError: '',
+      usernameError: "",
+      passwordError: "",
+      verificationCodeError: "",
       loading: false,
-      passwordType: 'password',
+      passwordType: "password",
       redirect: undefined,
       verificationCodeImgUrl: `${process.env.VUE_APP_BASE_API}/user/login/verification-code`,
-      refreshCodeCount: 0
-    }
+      refreshCodeCount: 0,
+    };
   },
   watch: {
     $route: {
-      handler: function(route) {
-        this.redirect = route.query && route.query.redirect
+      handler: function (route) {
+        this.redirect = route.query && route.query.redirect;
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   methods: {
     showPwd() {
-      if (this.passwordType === 'password') {
-        this.passwordType = ''
+      if (this.passwordType === "password") {
+        this.passwordType = "";
       } else {
-        this.passwordType = 'password'
+        this.passwordType = "password";
       }
       this.$nextTick(() => {
-        this.$refs.password.focus()
-      })
+        this.$refs.password.focus();
+      });
     },
     handleLogin() {
-      if (Cookies.get('loginRequireCode') !== undefined) {
-        this.showVerificationCodeInput = true
+      if (Cookies.get("loginRequireCode") !== undefined) {
+        this.showVerificationCodeInput = true;
       }
-      this.$refs['loginForm'].validate(valid => {
-        if (valid) {
-          this.loading = true
-          this.usernameError = ''
-          this.passwordError = ''
-          this.verificationCodeError = ''
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
-            this.loading = false
-          }).catch((error) => {
-            console.log(this.redirect)
-            this.loading = false
+      this.$refs["loginForm"].validate((valid) => {
+        if (!valid) {
+          console.log("error submit!!");
+          return false;
+        }
+        
+        this.loading = true;
+        this.usernameError = "";
+        this.passwordError = "";
+        this.verificationCodeError = "";
+        this.$store
+          .dispatch("user/login", this.loginForm)
+          .then(() => {
+            this.$router.push({ path: this.redirect || "/" });
+            this.loading = false;
+          })
+          .catch((error) => {
+            console.log(this.redirect);
+            this.loading = false;
             switch (error.code) {
               case 60001: // 用户名不存在
-                this.usernameError = error.message
-                break
+                this.usernameError = error.message;
+                break;
               case 60002: // 密码错误
-                this.passwordError = error.message
-                if (Cookies.get('loginRequireCode') !== undefined && !this.showVerificationCodeInput) {
-                  this.refreshCode()
-                  this.showVerificationCodeInput = true
-                  this.verificationCodeError = '请输入验证码'
+                this.passwordError = error.message;
+                if (
+                  Cookies.get("loginRequireCode") !== undefined &&
+                  !this.showVerificationCodeInput
+                ) {
+                  this.refreshCode();
+                  this.showVerificationCodeInput = true;
+                  this.verificationCodeError = "请输入验证码";
                 }
-                break
+                break;
               case 60003:
-                this.verificationCodeError = error.message
-                break
+                this.verificationCodeError = error.message;
+                break;
               case 60004: // 锁定本账户登录
-                this.usernameError = error.message
-                break
+                this.usernameError = error.message;
+                break;
             }
-          })
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
+          });
+      });
     },
     refreshCode() {
-      this.verificationCodeImgUrl = `${process.env.VUE_APP_BASE_API}/user/login/verification-code?${this.refreshCodeCount++}`
-    }
+      this.verificationCodeImgUrl = `${
+        process.env.VUE_APP_BASE_API
+      }/user/login/verification-code?${this.refreshCodeCount++}`;
+    },
   },
   beforeRouteEnter(to, from, next) {
-    next(vm => {
-      vm.showVerificationCodeInput = Cookies.get('loginRequireCode') !== undefined
-      vm.loginForm.code = ''
-    })
-  }
-}
+    next((vm) => {
+      vm.showVerificationCodeInput =
+        Cookies.get("loginRequireCode") !== undefined;
+      vm.loginForm.code = "";
+    });
+  },
+};
 </script>
 
 <style lang="scss">

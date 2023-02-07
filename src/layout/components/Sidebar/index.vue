@@ -27,15 +27,16 @@ import { mapGetters } from "vuex";
 import Logo from "./Logo";
 import SidebarItem from "./SidebarItem";
 import variables from "@/styles/variables.scss";
+import { constantRoutes } from "@/router";
 
 export default {
   components: { SidebarItem, Logo },
   computed: {
     ...mapGetters(["sidebar"]),
     routes() {
-      console.log('重新计算路由', this.$store.state.user.asyncRoutes)
+      console.log("重新计算路由", this.$store.state.user.asyncRoutes);
       // return this.$router.options.routes;
-      return this.$store.state.user.asyncRoutes
+      return constantRoutes.concat(this.$store.state.user.asyncRoutes);
     },
     activeMenu() {
       const route = this.$route;
