@@ -143,7 +143,9 @@ export default {
       const contacts = data;
       console.log(contacts);
       contacts.map((item) => {
-        item.lastContent = IMUI.lastContentRender(item.lastContent);
+        if (item.lastContent) {
+          item.lastContent = IMUI.lastContentRender(item.lastContent);
+        }
         return item;
       });
       IMUI.initContacts(contacts);
@@ -155,7 +157,7 @@ export default {
       console.log(event.data);
       IMUI.appendMessage(JSON.parse(event.data));
     };
-  }
+  },
 };
 </script>
 
