@@ -155,10 +155,7 @@ export default {
       console.log(event.data);
       IMUI.appendMessage(JSON.parse(event.data));
     };
-  },
-  destroyed() {
-    this.ws.close();
-  },
+  }
 };
 </script>
 
