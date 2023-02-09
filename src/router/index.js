@@ -66,6 +66,18 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: "/relationship",
+    component: Layout,
+    children: [
+      {
+        path: "index",
+        component: () => import("@/views/relationship/index"),
+        name: "Relationship",
+        meta: { title: "交友", icon: "relationship" }
+      }
+    ]
+  },
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

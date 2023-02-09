@@ -43,7 +43,7 @@ service.interceptors.response.use(
    * Here is just an example
    * You can also judge the status by HTTP Status Code
    */
-  response => {
+  async response => {
     const res = response.data
 
     // if the custom code is not 20000, it is judged as an error.
@@ -54,24 +54,28 @@ service.interceptors.response.use(
       //   duration: 5 * 1000
       // })
 
+      const error = new Error(res.message)
+      error.code = res.code
+
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
       if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
         // to re-login
-        MessageBox.confirm('您的会话已经失效了，你可以点击“取消”留在本页面，或者重新登录', '会话失效', {
+        await MessageBox.confirm('您的会话已经失效了，你可以点击“取消”留在本页面，或者重新登录', '会话失效', {
           confirmButtonText: '重新登录',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
+          console.log('会话失效 then')
           store.dispatch('user/resetToken').then(() => {
             const path = router.currentRoute.path
             router.push({ path: `/login?redirect=${path}` })
-            // location.reload()
           })
+        }).catch(() => {
+          console.log(router)
+          router.replace(router.currentRouter)
         })
-        return Promise.resolve()
+        return Promise.reject(error)
       }
-      const error = new Error(res.message)
-      error.code = res.code
       return Promise.reject(error)
     } else {
       return res

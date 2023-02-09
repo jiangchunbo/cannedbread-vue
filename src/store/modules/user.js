@@ -5,6 +5,7 @@ import { resetRouter } from '@/router'
 const getDefaultState = () => {
   return {
     token: getToken(),
+    id: 0,
     name: '',
     avatar: '',
     asyncRoutes: []
@@ -19,6 +20,9 @@ const mutations = {
   },
   SET_TOKEN: (state, token) => {
     state.token = token
+  },
+  SET_ID: (state, id) => {
+    state.id = id
   },
   SET_NAME: (state, name) => {
     state.name = name
@@ -51,14 +55,9 @@ const actions = {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
         const { data } = response
+        const { id, name, avatar, asyncRoutes } = data
 
-        console.log(data)
-        if (!data) {
-          return reject('Verification failed, please Login again.')
-        }
-
-        const { name, avatar, asyncRoutes } = data
-
+        commit('SET_ID', id)
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         commit('SET_ASYNC_ROUTES', asyncRoutes)

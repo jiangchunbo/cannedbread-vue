@@ -82,6 +82,7 @@ export default {
   width: 100%;
   position: relative;
   overflow: hidden;
+  z-index: 1;
 }
 
 .fixed-header + .app-main {

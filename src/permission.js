@@ -45,6 +45,10 @@ router.beforeEach(async (to, from, next) => {
             next()
           }
         } catch (error) {
+          if (error.code === 50008 || error.code === 50012 || error.code === 50014) {
+            NProgress.done()
+            return
+          }
           // remove token and go to login page to re-login
           await store.dispatch('user/resetToken')
           Message.error({

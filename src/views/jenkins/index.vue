@@ -1,9 +1,15 @@
 <template>
-  <div
-    v-loading="loading"
-    element-loading-text="拼命加载中"
-  >
-    <iframe ref="iframe" style="height: calc(100vh - 50px); width: 100%; border: none;" src="http://jenkins.jiangchunbo.com" />
+  <div v-loading="loading" element-loading-text="拼命加载中">
+    <iframe
+      ref="iframe"
+      style="
+        height: calc(100vh - 50px);
+        width: 100%;
+        border: none;
+        z-index: -99;
+      "
+      src="http://jenkins.jiangchunbo.com"
+    />
   </div>
 </template>
 
@@ -11,17 +17,17 @@
 export default {
   data() {
     return {
-      loading: false
-    }
+      loading: false,
+    };
   },
   mounted() {
-    this.loading = true
+    this.loading = true;
     this.$refs.iframe.onload = () => {
-      this.loading = false
-    }
+      this.loading = false;
+    };
   },
-  methods: {}
-}
+  methods: {},
+};
 </script>
 
 <style scoped>

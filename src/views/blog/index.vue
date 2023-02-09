@@ -4,7 +4,7 @@
     element-loading-text="拼命加载中">
     <iframe
       ref="blogIframe"
-      style="height: calc(100vh - 50px); width: 100%; border: none;"
+      style="height: calc(100vh - 50px); width: 100%; border: none; z-index: -99;"
       src="http://blog.jiangchunbo.com"
     />
   </div>
