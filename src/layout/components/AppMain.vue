@@ -1,8 +1,9 @@
 <template>
   <section class="app-main">
     <keep-alive>
-      <router-view v-if="$route.meta && !$route.meta.cacheIframe"/>
+      <router-view v-if="$route.meta && !$route.meta.cacheIframe && !$route.meta.noCache"/>
     </keep-alive>
+    <router-view v-if="$route.meta && !$route.meta.cacheIframe && $route.meta.noCache"/>
 
     <component
       :is="item.name"

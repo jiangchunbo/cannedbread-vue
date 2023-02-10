@@ -74,7 +74,7 @@ export const constantRoutes = [
         path: "index",
         component: () => import("@/views/relationship/index"),
         name: "Relationship",
-        meta: { title: "交友", icon: "relationship" }
+        meta: { title: "交友", icon: "relationship", "noCache":true  }
       }
     ]
   },

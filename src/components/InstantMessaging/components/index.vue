@@ -16,7 +16,6 @@ import lastContentRender from "../lastContentRender";
 
 import MemoryCache from "../utils/cache/memory";
 
-let allMessages = {};
 const emojiMap = {};
 const toPx = val => {
   return isString(val) ? val : `${val}px`;
@@ -99,6 +98,7 @@ export default {
     this.CacheMenuContainer = new MemoryCache();
     this.CacheMessageLoaded = new MemoryCache();
     this.CacheDraft = new MemoryCache();
+    this.allMessages = {};
     return {
       drawerVisible: !this.hideDrawer,
       currentContactId: null,
@@ -128,6 +128,7 @@ export default {
     this.initMenus();
   },
   async mounted() {
+    console.log('重新构造')
     await this.$nextTick();
   },
   computed: {
@@ -178,11 +179,12 @@ export default {
      */
     appendMessage(message, scrollToBottom = false) {
       let unread = "+1";
-      console.log('初始化消息', allMessages)
-      let messageList = allMessages[message.toContactId];
+      let messageList = this.allMessages[message.toContactId];
       
       // 如果是自己的消息需要push，发送的消息不再增加未读条数
       if (message.type == 'event' || this.user.id == message.fromUser.id) unread = "+0";
+
+      // undefined 表示还与这个人建立消息列表
       if (messageList === undefined) {
         this.updateContact({
           id: message.toContactId,
@@ -588,8 +590,8 @@ export default {
         1: "push",
       }[t];
       if (!Array.isArray(data)) data = [data];
-      allMessages[contactId] = allMessages[contactId] || [];
-      allMessages[contactId][type](...data);
+      this.allMessages[contactId] = this.allMessages[contactId] || [];
+      this.allMessages[contactId][type](...data);
     },
     /**
      * 设置最新消息DOM
@@ -627,9 +629,9 @@ export default {
       return str.replace(/<img emoji-name=\"([^\"]*?)\" [^>]*>/gi, "[!$1]");
     },
     updateCurrentMessages() {
-      if (!allMessages[this.currentContactId])
-        allMessages[this.currentContactId] = [];
-      this.currentMessages = allMessages[this.currentContactId];
+      if (!this.allMessages[this.currentContactId])
+      this.allMessages[this.currentContactId] = [];
+      this.currentMessages = this.allMessages[this.currentContactId];
     },
     /**
      * 将当前聊天窗口滚动到底部
@@ -720,7 +722,7 @@ export default {
         this.$refs.messages.resetLoadState();
       }
 
-      if (!allMessages[contactId]) {
+      if (!this.allMessages[contactId]) {
         this.updateCurrentMessages();
         this._emitPullMessages(isEnd => {
           this.messageViewToBottom();
@@ -740,10 +742,10 @@ export default {
     removeMessage(messageId) {
       const message = this.findMessage(messageId);
       if (!message) return false;
-      const index = allMessages[message.toContactId].findIndex(
+      const index = this.allMessages[message.toContactId].findIndex(
         ({ id }) => id == messageId,
       );
-      allMessages[message.toContactId].splice(index, 1);
+      this.allMessages[message.toContactId].splice(index, 1);
       return true;
     },
     /**
@@ -959,8 +961,8 @@ export default {
       return this.findContactIndexById(contactId) !== -1;
     },
     findMessage(messageId) {
-      for (const key in allMessages) {
-        const message = allMessages[key].find(({ id }) => id == messageId);
+      for (const key in this.allMessages) {
+        const message = this.allMessages[key].find(({ id }) => id == messageId);
         if (message) return message;
       }
     },
@@ -993,11 +995,11 @@ export default {
      */
     clearMessages(contactId) {
       if (contactId) {
-        delete allMessages[contactId];
+        delete this.allMessages[contactId];
         this.CacheMessageLoaded.remove(contactId);
         this.CacheDraft.remove(contactId);
       } else {
-        allMessages = {};
+        this.allMessages = {};
         this.CacheMessageLoaded.remove();
         this.CacheDraft.remove();
       }
@@ -1008,7 +1010,7 @@ export default {
      * @return {Object<Contact.id,Message>}
      */
     getMessages(contactId) {
-      return (contactId ? allMessages[contactId] : allMessages) || [];
+      return (contactId ? this.allMessages[contactId] : this.allMessages) || [];
     },
     changeDrawer(params) {
       this.drawerVisible = !this.drawerVisible;
@@ -1085,7 +1087,8 @@ bezier = cubic-bezier(0.645, 0.045, 0.355, 1)
   flex-column()
   align-items center
   width 60px
-  background #1d232a
+  //background sss#1d232a
+  background #ffffff
   padding 15px 0
   position relative
   user-select none

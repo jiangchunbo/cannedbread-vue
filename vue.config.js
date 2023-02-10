@@ -45,6 +45,13 @@ module.exports = {
         pathRewrite: {
           '^/api': ''
         }
+      },
+      '/socket': {
+        target: 'ws://127.0.0.1:11999',
+        ws: true,
+        pathRewrite: {
+          '^/socket': '/'
+        }
       }
     }
   },

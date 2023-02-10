@@ -1,29 +1,32 @@
 <template>
-  <div>
+  <div style="height: 100%; height: 100%">
     <instant-messaging
       ref="IMUI"
       :user="user"
       @pull-messages="handlePullMessages"
       @send="handleSend"
+      width="100%"
+      height="100%"
     >
       <div slot="sidebar-contact-top">
-        <div v-show="!searching">
-          <el-button @click="searching = true">
-            <i class="el-icon-plus"></i>
-          </el-button>
-        </div>
-        <div v-show="searching">
+        <div>
           <el-form inline>
             <el-form-item>
               <el-input
                 v-model="keyword"
                 style="width: 100px"
                 @keydown.enter.native="onSearchUser"
+                placeholder="昵称"
               />
             </el-form-item>
-            <el-form-item>
+            <!-- <el-form-item v-show="!searching">
+              <el-button @click="onClickAddContact">
+                <i class="el-icon-plus"></i>
+              </el-button>
+            </el-form-item> -->
+            <!-- <el-form-item v-show="searching">
               <el-button @click="onClickCancelSearch"> 取消 </el-button>
-            </el-form-item>
+            </el-form-item> -->
           </el-form>
           <div
             v-for="(item, index) in searchedUserList"
@@ -31,8 +34,12 @@
             :key="index"
           >
             <div class="searched-user" @click="handleClickUser(item)">
-              <el-avatar class="el-avatar" :src="item.avatar" />
-              <span>{{ item.nickname }}</span>
+              <el-avatar
+                shape="square"
+                class="searched-user-avatar"
+                :src="item.avatar"
+              />
+              <span class="searched-user-nickname">{{ item.nickname }}</span>
             </div>
           </div>
         </div>
@@ -45,7 +52,11 @@
       append-to-body
     >
       <div class="searched-user-detail">
-        <el-avatar class="el-avatar" :src="currentShowingUser.avatar" />
+        <el-avatar
+          shape="square"
+          class="el-avatar"
+          :src="currentShowingUser.avatar"
+        />
         <span>{{ currentShowingUser.nickname }}</span>
         <el-button @click="handleAddContact(currentShowingUser)"
           >添加到通讯录</el-button
@@ -79,20 +90,19 @@ export default {
     };
   },
   methods: {
+    onClickAddContact() {
+      const { IMUI } = this.$refs;
+      this.searching = true;
+      this.cachedContacts = IMUI.contacts;
+    },
     handleAddContact(currentShowingUser) {
       const { IMUI } = this.$refs;
       this.$axios
         .post(`/relationship/addContact?id=${currentShowingUser.id}`)
         .then((res) => {
           const { data } = res;
-          console.log(data);
-          console.log(IMUI);
-          console.log(IMUI.appendContact);
-
-          console.log(IMUI.contacts);
           this.cachedContacts.push(data);
-          console.log(IMUI.appendContact(data));
-          console.log(IMUI.contacts);
+          this.dialogVisible = false;
         });
     },
     handleClickUser(currentShowingUser) {
@@ -109,7 +119,6 @@ export default {
       this.$axios.get(`/relationship/search?keyword=${keyword}`).then((res) => {
         const { data } = res;
         const { IMUI } = this.$refs;
-        this.cachedContacts = IMUI.contacts;
         IMUI.initContacts([]);
         this.searchedUserList = data;
       });
@@ -151,15 +160,29 @@ export default {
       IMUI.initContacts(contacts);
     });
     const name = this.$store.getters.name;
-    this.ws = new WebSocket(`ws://127.0.0.1:11999/relationship/chat/${name}`);
+    this.ws = new WebSocket(process.env.VUE_APP_BASE_SOCKET + `/relationship/chat/${name}`);
 
     this.ws.onmessage = (event) => {
       console.log(event.data);
-      IMUI.appendMessage(JSON.parse(event.data));
+      IMUI.appendMessage(JSON.parse(event.data), true);
     };
   },
 };
 </script>
 
 <style lang="scss">
+.searched-user {
+  padding: 10px;
+
+  .searched-user-avatar {
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+  .searched-user-nickname {
+  }
+}
+
+.searched-user:hover {
+  background-color: #ddd;
+}
 </style>
