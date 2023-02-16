@@ -9,25 +9,30 @@
       height="100%"
     >
       <div slot="sidebar-contact-top">
-        <div>
-          <el-form inline>
-            <el-form-item>
+        <div class="search-user">
+          <el-form class="search-user-form" inline>
+            <el-form-item class="search-user-input">
               <el-input
+                :disabled="searchModel !== 'user'"
+                @blur="resetContacts"
+                @focus="onSearchUser"
                 v-model="keyword"
-                style="width: 100px"
-                @keydown.enter.native="onSearchUser"
-                placeholder="昵称"
+                @input="onSearchUser"
+                placeholder="请在此输入昵称搜索"
               />
             </el-form-item>
-            <!-- <el-form-item v-show="!searching">
-              <el-button @click="onClickAddContact">
-                <i class="el-icon-plus"></i>
-              </el-button>
-            </el-form-item> -->
-            <!-- <el-form-item v-show="searching">
-              <el-button @click="onClickCancelSearch"> 取消 </el-button>
-            </el-form-item> -->
+            <svg-icon
+              v-if="searchModel != 'user'"
+              @click="searchModel = 'user'"
+              class="add-contact"
+              style="height: 30px; width: 30px; color: #aaa"
+              icon-class="添加好友"
+            />
+            <span v-else class="cancel-add-contact" @click="searchModel = ''">取消</span>
           </el-form>
+          <div class="not-found-user" v-show="notFoundUser && keyword">
+            无法找到该用户，请检查你填写的账号是否正确。
+          </div>
           <div
             v-for="(item, index) in searchedUserList"
             class="searched-user-container"
@@ -87,14 +92,11 @@ export default {
       currentShowingUser: {},
       dialogVisible: false,
       ws: null,
+      notFoundUser: true,
+      searchModel: "",
     };
   },
   methods: {
-    onClickAddContact() {
-      const { IMUI } = this.$refs;
-      this.searching = true;
-      this.cachedContacts = IMUI.contacts;
-    },
     handleAddContact(currentShowingUser) {
       const { IMUI } = this.$refs;
       this.$axios
@@ -109,19 +111,32 @@ export default {
       this.dialogVisible = true;
       this.currentShowingUser = currentShowingUser;
     },
-    onClickCancelSearch() {
-      this.searching = false;
+    resetContacts() {
       const { IMUI } = this.$refs;
+      console.log(this.cachedContacts);
       IMUI.initContacts(this.cachedContacts);
     },
     onSearchUser() {
+      const { IMUI } = this.$refs;
+      this.searching = true;
+      this.cachedContacts = IMUI.contacts;
       const keyword = this.keyword;
-      this.$axios.get(`/relationship/search?keyword=${keyword}`).then((res) => {
-        const { data } = res;
-        const { IMUI } = this.$refs;
-        IMUI.initContacts([]);
-        this.searchedUserList = data;
-      });
+      this.$axios
+        .get(`/relationship/search?keyword=${keyword}`)
+        .then((res) => {
+          const { data } = res;
+          const { IMUI } = this.$refs;
+          IMUI.initContacts([]);
+          this.searchedUserList = data;
+          if (data.length === 0) {
+            this.notFoundUser = true;
+          } else {
+            this.notFoundUser = false;
+          }
+        })
+        .finally(() => {
+          this.searching = false;
+        });
     },
     handlePullMessages(contact, next) {
       //从后端请求消息数据，包装成下面的样子
@@ -129,7 +144,6 @@ export default {
         .get(`/relationship/message?contactId=${contact.id}`)
         .then((res) => {
           const { data } = res;
-
           //将第二个参数设为true，表示已到末尾，聊天窗口顶部会显示“暂无更多消息”，不然会一直转圈。
           next(data, true);
         });
@@ -160,7 +174,9 @@ export default {
       IMUI.initContacts(contacts);
     });
     const name = this.$store.getters.name;
-    this.ws = new WebSocket(process.env.VUE_APP_BASE_SOCKET + `/relationship/chat/${name}`);
+    this.ws = new WebSocket(
+      process.env.VUE_APP_BASE_SOCKET + `/relationship/chat/${name}`
+    );
 
     this.ws.onmessage = (event) => {
       console.log(event.data);
@@ -171,6 +187,14 @@ export default {
 </script>
 
 <style lang="scss">
+.search-user {
+  .not-found-user {
+    width: 200px;
+    text-align: center;
+    color: #aaa;
+    margin: auto;
+  }
+}
 .searched-user {
   padding: 10px;
 
@@ -178,7 +202,61 @@ export default {
     vertical-align: middle;
     margin-right: 10px;
   }
-  .searched-user-nickname {
+}
+
+.search-user-form {
+  height: 40px;
+  padding: 0;
+  position: relative;
+  .search-user-input {
+    position: absolute;
+    left: 10px;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto 0;
+    width: 190px;
+    height: 30px;
+    .el-form-item__content {
+      line-height: 100%;
+      height: 100%;
+      width: 100%;
+    }
+    .el-input {
+      height: 100%;
+      width: 100%;
+    }
+    input {
+      height: 100%;
+      width: 100%;
+    }
+  }
+  .cancel-add-contact {
+    cursor: pointer;
+    position: absolute;
+    right: 10px;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    height: 30px;
+    width: 30px;
+    line-height: 30px;
+    color: #aaa;
+  }
+  .cancel-add-contact:hover {
+    color: #ddd;
+  }
+  .add-contact {
+    cursor: pointer;
+    position: absolute;
+    right: 10px;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+  }
+  .add-contact:hover {
+    border-radius: 3px;
+    background: #ddd;
   }
 }
 
