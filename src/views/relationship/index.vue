@@ -5,6 +5,7 @@
       :user="user"
       @pull-messages="handlePullMessages"
       @send="handleSend"
+      @change-menu="onChangeMenu"
       width="100%"
       height="100%"
     >
@@ -14,7 +15,6 @@
             <el-form-item class="search-user-input">
               <el-input
                 :disabled="searchModel !== 'user'"
-                @blur="resetContacts"
                 @focus="onSearchUser"
                 v-model="keyword"
                 @input="onSearchUser"
@@ -28,7 +28,7 @@
               style="height: 30px; width: 30px; color: #aaa"
               icon-class="添加好友"
             />
-            <span v-else class="cancel-add-contact" @click="searchModel = ''">取消</span>
+            <span v-else class="cancel-add-contact" @click="onClickCancelSearchUser">取消</span>
           </el-form>
           <div class="not-found-user" v-show="notFoundUser && keyword">
             无法找到该用户，请检查你填写的账号是否正确。
@@ -40,6 +40,7 @@
           >
             <div class="searched-user" @click="handleClickUser(item)">
               <el-avatar
+                fill="cover"
                 shape="square"
                 class="searched-user-avatar"
                 :src="item.avatar"
@@ -97,6 +98,17 @@ export default {
     };
   },
   methods: {
+    onChangeMenu(name) {
+      if (name === 'messages') {
+        this.resetContacts()
+        this.searchModel = ''
+      }
+    },
+    onClickCancelSearchUser() {
+      this.searchModel = ''
+      this.keyword = ''
+      this.resetContacts()
+    },
     handleAddContact(currentShowingUser) {
       const { IMUI } = this.$refs;
       this.$axios
@@ -105,13 +117,14 @@ export default {
           const { data } = res;
           this.cachedContacts.push(data);
           this.dialogVisible = false;
-        });
+          });
     },
     handleClickUser(currentShowingUser) {
       this.dialogVisible = true;
       this.currentShowingUser = currentShowingUser;
     },
     resetContacts() {
+      this.searchedUserList = []
       const { IMUI } = this.$refs;
       console.log(this.cachedContacts);
       IMUI.initContacts(this.cachedContacts);

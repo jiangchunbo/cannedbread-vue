@@ -78,6 +78,18 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: "/third-bind",
+    component: Layout,
+    children: [
+      {
+        path: "index",
+        component: () => import("@/views/third-bind/index"),
+        name: "ThirdBind",
+        meta: { title: "绑定第三方", icon: "third-bind", "noCache":true  }
+      }
+    ]
+  },
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

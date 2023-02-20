@@ -3,6 +3,7 @@
     <el-form inline size="mini" class="search-form">
       <el-form-item>
         <el-select v-model="form.category" style="width: 150px" @change="onChangeCategory" placeholder="装备类型" clearable>
+          <el-option label="主武器" value="主武器" />
           <el-option label="副武器" value="副武器" />
           <el-option label="护具" value="护具" />
           <el-option label="靴子" value="靴子" />
