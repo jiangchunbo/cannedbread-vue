@@ -154,12 +154,6 @@ export default {
   font-size: 18px;
 }
 
-.php-codemirror .CodeMirror {
-  font-family: Consolas, monospace;
-  font-size: 18px;
-  height: 100%;
-}
-
 .php-codemirror.code-editor-container {
   border: 1px solid #DCDEE2;
 }

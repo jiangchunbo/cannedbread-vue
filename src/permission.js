@@ -9,7 +9,7 @@ import Layout from '@/layout'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
-const whiteList = ['/login'] // no redirect whitelist
+const whiteList = ['/login', '/javascript-executor'] // no redirect whitelist
 
 router.beforeEach(async (to, from, next) => {
   // start progress bar
@@ -40,7 +40,7 @@ router.beforeEach(async (to, from, next) => {
           store.commit('user/SET_ASYNC_ROUTES', asyncRoutes)
 
           if (to.redirectedFrom) {
-            router.replace(to.redirectedFrom);
+            router.replace(to.redirectedFrom)
           } else {
             next()
           }
@@ -61,6 +61,7 @@ router.beforeEach(async (to, from, next) => {
     }
   } else {
     /* has no token*/
+    console.log(to.path)
     if (whiteList.indexOf(to.path) !== -1) {
       // in the free login whitelist, go directly
       next()
@@ -71,7 +72,6 @@ router.beforeEach(async (to, from, next) => {
     }
   }
 })
-
 
 export function buildRoutes(routes, parent) {
   const newRoutes = []
@@ -93,7 +93,6 @@ export function buildRoutes(routes, parent) {
   }
   return newRoutes
 }
-
 
 router.afterEach(() => {
   // finish progress bar

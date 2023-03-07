@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <a :href="bindWorkWeixinUrl"></a>
+    <a :href="bindWorkWeixinUrl">绑定到第三方</a>
   </div>
 </template>
 
