@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <a :href="bindWorkWeixinUrl">绑定到第三方</a>
+    <el-link :href="bindWorkWeixinUrl">绑定到第三方</el-link>
   </div>
 </template>
 
@@ -9,18 +9,22 @@
 export default {
   data() {
     return {
-      bindWorkWeixinUrl: '',
-    };
+      bindWorkWeixinUrl: ''
+    }
   },
   mounted() {
-    this.$axios.get("/work-weixin/qrConnect").then((res) => {
-      const { data } = res;
+    this.$axios.get('/work-weixin/qrConnect', {
+      params: {
+        userId: this.$store.getters.id
+      }
+    }).then((res) => {
+      console.log(res)
+      const { data } = res
       this.bindWorkWeixinUrl = data
-    });
+    })
   },
   created() {
   },
-  methods: {
-  },
-};
+  methods: {}
+}
 </script>

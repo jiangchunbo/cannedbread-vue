@@ -1,21 +1,30 @@
 <template>
   <div class="app-container" style="height: 100%; overflow-y: auto">
+    <p>试一试</p>
     <div style="height: 150px;">
       <codemirror
+        style="border: 1px solid #aaa"
         ref="codeMirrorEditor"
         v-model="code"
         :options="cmOptions"
         @ready="onCodemirrorReady"
       />
     </div>
-    <el-button size="small" :loading="loading" @click="doExecute()">执行</el-button>
-    <div style="height: 100px;">
-      <codemirror
-        v-model="outMessage"
-        v-loading="loading"
-        :options="resultOptions"
-      />
-    </div>
+    <el-row style="height: 100px; padding: 10px 0">
+      <el-col span="4">
+        <div style="padding: 10px">
+          <el-button size="small" :loading="loading" @click="doExecute()">执行</el-button>
+        </div>
+      </el-col>
+      <el-col span="20" style="height: 100%">
+        <codemirror
+          style="border: 1px solid #aaa"
+          v-model="outMessage"
+          v-loading="loading"
+          :options="resultOptions"
+        />
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -86,9 +95,14 @@ export default {
       }
       this.loading = true
       this.outMessage = ''
-      // eslint-disable-next-line no-eval
-      eval(this.code)
-      this.loading = false
+      try {
+        // eslint-disable-next-line no-eval
+        eval(this.code)
+      } catch (e) {
+        this.outMessage = e.message
+      } finally {
+        this.loading = false
+      }
     },
     onCodemirrorReady(cm) {
       cm.on('keypress', () => {

@@ -93,6 +93,7 @@ export const constantRoutes = [
   {
     path: '/javascript-executor',
     name: 'JavaScriptExecutor',
+    hidden: true,
     component: () => import('@/views/javascript-executor/index'),
     meta: { title: 'Javascript 执行器', icon: 'javascript' }
   },
