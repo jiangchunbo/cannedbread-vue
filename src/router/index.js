@@ -114,19 +114,6 @@ const dynamicRoutes = [
       }
     ]
   },
-
-  {
-    path: '/algorithm',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'Algorithm',
-        component: () => import('@/views/algorithm/index'),
-        meta: { title: '加密解密', icon: 'encrypt' }
-      }
-    ]
-  },
   {
     path: '/php',
     component: Layout,

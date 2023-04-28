@@ -56,11 +56,12 @@ const actions = {
       getInfo(state.token).then(response => {
         const { data } = response
         const { id, name, avatar, asyncRoutes } = data
-
         commit('SET_ID', id)
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
-        commit('SET_ASYNC_ROUTES', asyncRoutes)
+        commit('SET_ASYNC_ROUTES', asyncRoutes.map(config => {
+          return JSON.parse(config)
+        }))
         resolve(data)
       }).catch(error => {
         reject(error)
