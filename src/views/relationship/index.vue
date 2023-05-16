@@ -64,8 +64,10 @@
           :src="currentShowingUser.avatar"
         />
         <span>{{ currentShowingUser.nickname }}</span>
-        <el-button @click="handleAddContact(currentShowingUser)"
-          >添加到通讯录</el-button
+        <el-button
+          @click="handleAddContact(currentShowingUser)"
+        >添加到通讯录
+        </el-button
         >
       </div>
     </el-dialog>
@@ -73,9 +75,10 @@
 </template>
 
 <script>
-import InstantMessaging from "@/components/InstantMessaging/components/index.vue";
+import InstantMessaging from '@/components/InstantMessaging/components/index.vue'
+
 export default {
-  name: "Relationship",
+  name: 'Relationship',
   components: {
     InstantMessaging,
   },
@@ -86,22 +89,51 @@ export default {
         displayName: this.$store.getters.name,
         avatar: this.$store.getters.avatar,
       },
+      contacts: [],
       cachedContacts: [],
       searchedUserList: [],
       searching: false,
-      keyword: "",
+      keyword: '',
       currentShowingUser: {},
       dialogVisible: false,
       ws: null,
       notFoundUser: true,
-      searchModel: "",
-    };
+      searchModel: ''
+    }
+  },
+  mounted() {
+    const { IMUI } = this.$refs
+    // 初始化表情包
+    // 从后端请求联系人数据，包装成下面的样子
+    this.$axios.get(`/relationship/contact`).then((res) => {
+      const { data } = res
+      const contacts = data
+      contacts.map((item) => {
+        if (item.lastContent) {
+          item.lastContent = IMUI.lastContentRender(item.lastContent)
+        }
+        return item
+      })
+      this.contacts = contacts
+      IMUI.initContacts(contacts)
+    })
+    const id = this.$store.getters.id
+    this.ws = new WebSocket(
+      process.env.VUE_APP_BASE_SOCKET + `/relationship/chat/${id}`
+    )
+
+    this.ws.onmessage = (event) => {
+      console.log(event.data)
+      IMUI.appendMessage(JSON.parse(event.data), true)
+    }
   },
   methods: {
     onChangeMenu(name) {
       if (name === 'messages') {
         this.resetContacts()
         this.searchModel = ''
+      } else if (name === 'contacts') {
+        // 什么都不做
       }
     },
     onClickCancelSearchUser() {
@@ -110,93 +142,63 @@ export default {
       this.resetContacts()
     },
     handleAddContact(currentShowingUser) {
-      const { IMUI } = this.$refs;
+      const { IMUI } = this.$refs
       this.$axios
         .post(`/relationship/addContact?id=${currentShowingUser.id}`)
         .then((res) => {
-          const { data } = res;
-          this.cachedContacts.push(data);
-          this.dialogVisible = false;
-          });
+          const { data } = res
+          this.cachedContacts.push(data)
+          this.dialogVisible = false
+        })
     },
     handleClickUser(currentShowingUser) {
-      this.dialogVisible = true;
-      this.currentShowingUser = currentShowingUser;
+      this.dialogVisible = true
+      this.currentShowingUser = currentShowingUser
     },
     resetContacts() {
       this.searchedUserList = []
-      const { IMUI } = this.$refs;
-      console.log(this.cachedContacts);
-      IMUI.initContacts(this.cachedContacts);
     },
     onSearchUser() {
-      const { IMUI } = this.$refs;
-      this.searching = true;
-      this.cachedContacts = IMUI.contacts;
-      const keyword = this.keyword;
+      const { IMUI } = this.$refs
+      this.searching = true
+      this.cachedContacts = IMUI.contacts
+      const keyword = this.keyword
       this.$axios
         .get(`/relationship/search?keyword=${keyword}`)
         .then((res) => {
-          const { data } = res;
-          const { IMUI } = this.$refs;
-          IMUI.initContacts([]);
-          this.searchedUserList = data;
+          const { data } = res
+          const { IMUI } = this.$refs
+          IMUI.initContacts([])
+          this.searchedUserList = data
           if (data.length === 0) {
-            this.notFoundUser = true;
+            this.notFoundUser = true
           } else {
-            this.notFoundUser = false;
+            this.notFoundUser = false
           }
         })
         .finally(() => {
-          this.searching = false;
-        });
+          this.searching = false
+        })
     },
     handlePullMessages(contact, next) {
       //从后端请求消息数据，包装成下面的样子
       this.$axios
         .get(`/relationship/message?contactId=${contact.id}`)
         .then((res) => {
-          const { data } = res;
+          const { data } = res
           //将第二个参数设为true，表示已到末尾，聊天窗口顶部会显示“暂无更多消息”，不然会一直转圈。
-          next(data, true);
-        });
+          next(data, true)
+        })
     },
     handleSend(message, next, file) {
       // ... 调用你的消息发送业务接口
-      this.ws.send(JSON.stringify(message));
-      console.log(JSON.stringify(message));
+      this.ws.send(JSON.stringify(message))
+      console.log(JSON.stringify(message))
       //执行到next消息会停止转圈，如果接口调用失败，可以修改消息的状态 next({status:'failed'});
-      next();
+      next()
     },
   },
-  mounted() {
-    const { IMUI } = this.$refs;
-    //初始化表情包。
-    // IMUI.initEmoji(...)
-    //从后端请求联系人数据，包装成下面的样子
-    this.$axios.get(`/relationship/contact`).then((res) => {
-      const { data } = res;
-      const contacts = data;
-      console.log(contacts);
-      contacts.map((item) => {
-        if (item.lastContent) {
-          item.lastContent = IMUI.lastContentRender(item.lastContent);
-        }
-        return item;
-      });
-      IMUI.initContacts(contacts);
-    });
-    const name = this.$store.getters.name;
-    this.ws = new WebSocket(
-      process.env.VUE_APP_BASE_SOCKET + `/relationship/chat/${name}`
-    );
-
-    this.ws.onmessage = (event) => {
-      console.log(event.data);
-      IMUI.appendMessage(JSON.parse(event.data), true);
-    };
-  },
-};
+}
 </script>
 
 <style lang="scss">
@@ -208,6 +210,7 @@ export default {
     margin: auto;
   }
 }
+
 .searched-user {
   padding: 10px;
 
@@ -221,6 +224,7 @@ export default {
   height: 40px;
   padding: 0;
   position: relative;
+
   .search-user-input {
     position: absolute;
     left: 10px;
@@ -230,20 +234,24 @@ export default {
     margin: auto 0;
     width: 190px;
     height: 30px;
+
     .el-form-item__content {
       line-height: 100%;
       height: 100%;
       width: 100%;
     }
+
     .el-input {
       height: 100%;
       width: 100%;
     }
+
     input {
       height: 100%;
       width: 100%;
     }
   }
+
   .cancel-add-contact {
     cursor: pointer;
     position: absolute;
@@ -256,9 +264,11 @@ export default {
     line-height: 30px;
     color: #aaa;
   }
+
   .cancel-add-contact:hover {
     color: #ddd;
   }
+
   .add-contact {
     cursor: pointer;
     position: absolute;
@@ -267,6 +277,7 @@ export default {
     bottom: 0;
     margin: auto;
   }
+
   .add-contact:hover {
     border-radius: 3px;
     background: #ddd;
