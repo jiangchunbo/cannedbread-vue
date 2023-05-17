@@ -117,17 +117,28 @@ export default {
       this.contacts = contacts
       IMUI.initContacts(contacts)
     })
-    const id = this.$store.getters.id
-    this.ws = new WebSocket(
-      process.env.VUE_APP_BASE_SOCKET + `/relationship/chat/${id}`
-    )
-
-    this.ws.onmessage = (event) => {
-      console.log(event.data)
-      IMUI.appendMessage(JSON.parse(event.data), true)
-    }
+    // 初始化 websocket
+    this.initWebSocket()
+  },
+  destroyed() {
+    this.ws.close()
   },
   methods: {
+    initWebSocket() {
+      const { IMUI } = this.$refs
+      const id = this.$store.getters.id
+      this.ws = new WebSocket(
+        process.env.VUE_APP_BASE_SOCKET + `/relationship/chat/${id}`
+      )
+
+      this.ws.onmessage = (event) => {
+        console.log(event.data)
+        IMUI.appendMessage(JSON.parse(event.data), true)
+      }
+      this.ws.onerror = (event) => {
+        this.initWebSocket()
+      }
+    },
     onChangeMenu(name) {
       if (name === 'messages') {
         this.resetContacts()
@@ -181,12 +192,10 @@ export default {
         })
     },
     handlePullMessages(contact, next) {
-      //从后端请求消息数据，包装成下面的样子
       this.$axios
         .get(`/relationship/message?contactId=${contact.id}`)
         .then((res) => {
           const { data } = res
-          //将第二个参数设为true，表示已到末尾，聊天窗口顶部会显示“暂无更多消息”，不然会一直转圈。
           next(data, true)
         })
     },
@@ -194,10 +203,9 @@ export default {
       // ... 调用你的消息发送业务接口
       this.ws.send(JSON.stringify(message))
       console.log(JSON.stringify(message))
-      //执行到next消息会停止转圈，如果接口调用失败，可以修改消息的状态 next({status:'failed'});
       next()
-    },
-  },
+    }
+  }
 }
 </script>
 
