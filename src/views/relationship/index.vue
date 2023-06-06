@@ -201,7 +201,12 @@ export default {
     },
     handleSend(message, next, file) {
       // ... 调用你的消息发送业务接口
-      this.ws.send(JSON.stringify(message))
+      try {
+        this.ws.send(JSON.stringify(message))
+      } catch (e) {
+        this.initWebSocket()
+        this.ws.send(JSON.stringify(message))
+      }
       console.log(JSON.stringify(message))
       next()
     }

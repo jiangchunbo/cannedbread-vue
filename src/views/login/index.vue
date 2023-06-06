@@ -184,6 +184,7 @@ export default {
         this.$store
           .dispatch("user/login", this.loginForm)
           .then(() => {
+            Cookies.remove("loginRequireCode")
             this.$router.push({ path: this.redirect || "/" });
             this.loading = false;
           })
@@ -196,10 +197,7 @@ export default {
                 break;
               case 60002: // 密码错误
                 this.passwordError = error.message;
-                if (
-                  Cookies.get("loginRequireCode") !== undefined &&
-                  !this.showVerificationCodeInput
-                ) {
+                if ( Cookies.get("loginRequireCode") !== undefined && !this.showVerificationCodeInput ) {
                   this.refreshCode();
                   this.showVerificationCodeInput = true;
                   this.verificationCodeError = "请输入验证码";
@@ -210,6 +208,7 @@ export default {
                 break;
               case 60004: // 锁定本账户登录
                 this.usernameError = error.message;
+                this.showVerificationCodeInput = false
                 break;
             }
           });
