@@ -13,70 +13,66 @@
     </el-tree>
   </div>
 </template>
-  
 <script>
 import {
   listMyMenusConfig,
   saveMyMenusConfig,
   setMenusVisible,
-} from "@/api/menus";
-import { buildRoutes } from "@/permission";
-import { constantRoutes, resetRouter } from "@/router";
+} from '@/api/menus'
+import { buildRoutes } from '@/permission'
+import { constantRoutes, resetRouter } from '@/router'
 
 export default {
-  name: "Menus",
+  name: 'Menus',
   data() {
     return {
       menus: [],
-      checkedKeys: [],
-    };
-  },
-  methods: {
-    getCheckedNodes() {
-      return this.$refs.tree.getCheckedNodes();
-    },
-    saveMenusConfig(routeNames) {
-      saveMyMenusConfig(routeNames).then((res) => {});
-    },
-    onClickSave() {
-      const checkedNodes = this.getCheckedNodes();
-      const routeNames = checkedNodes.map((item) => {
-        return item.id;
-      });
-      console.log(routeNames);
-      this.saveMenusConfig(routeNames);
-    },
-    onCheckChange(node, checked) {
-      console.log(JSON.stringify(this.getCheckedNodes().map(item => item.id)));
-      if (checked) {
-        setMenusVisible(JSON.stringify(this.getCheckedNodes().map(item => item.id))).then((res) => {
-          const { data } = res;
-          resetRouter()
-          const newRoutes = buildRoutes(data)
-          this.$router.addRoutes(newRoutes);
-          this.$store.commit("user/SET_ASYNC_ROUTES", newRoutes);
-        });
-      } else {
-        setMenusVisible(JSON.stringify(this.getCheckedNodes().map(item => item.id))).then((res) => {
-          const { data } = res;
-          resetRouter()
-          const newRoutes = buildRoutes(data)
-          this.$router.addRoutes(newRoutes);
-          this.$store.commit("user/SET_ASYNC_ROUTES", newRoutes);
-        });
-      }
-    },
+      checkedKeys: []
+    }
   },
   mounted() {
     listMyMenusConfig().then((res) => {
-      const { data } = res;
-      this.menus = data.routeList;
-      this.checkedKeys = data.checkedKeys;
-    });
+      const { data } = res
+      this.menus = data.routeList
+      this.checkedKeys = data.checkedKeys
+    })
   },
-};
+  methods: {
+    getCheckedNodes() {
+      return this.$refs.tree.getCheckedNodes()
+    },
+    saveMenusConfig(routeNames) {
+      saveMyMenusConfig(routeNames).then((res) => {
+      })
+    },
+    onClickSave() {
+      const checkedNodes = this.getCheckedNodes()
+      const routeNames = checkedNodes.map((item) => {
+        return item.id
+      })
+      console.log(routeNames)
+      this.saveMenusConfig(routeNames)
+    },
+    onCheckChange(node, checked) {
+      setMenusVisible({
+        params: {
+          menuId: node.id,
+          visible: checked
+        }
+      }).then((res) => {
+        const { data } = res
+        resetRouter()
+        const newRoutes = buildRoutes(data.map(route => {
+          return JSON.parse(route)
+        }))
+        console.log(newRoutes)
+        this.$router.addRoutes(newRoutes)
+        this.$store.commit('user/SET_ASYNC_ROUTES', newRoutes)
+      })
+    }
+  },
+}
 </script>
-  
+
 <style>
 </style>
-  

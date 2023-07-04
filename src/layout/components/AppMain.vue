@@ -15,6 +15,7 @@
 
 <script>
 import Vue from 'vue'
+import store from '@/store'
 
 export default {
   name: 'AppMain',
@@ -39,6 +40,7 @@ export default {
   },
   created() {
     const iframeComponents = this.getIframeComponents()
+    console.log('iframeComponents', iframeComponents)
     iframeComponents.forEach(item => {
       Vue.component(item.name, item.component)
     })
@@ -55,8 +57,7 @@ export default {
       }
     },
     getIframeComponents() {
-      const router = this.$router
-      const routes = router.options.routes
+      const routes = store.getters.asyncRoutes
       const iframeRoutes = routes.filter(item => {
         return item.children && item.children.length === 1 &&
           item.children[0].meta &&

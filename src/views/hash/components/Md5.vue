@@ -1,17 +1,12 @@
 <template>
-  <div>
+  <div class="md5-container">
     <el-form>
-      <el-form-item label="输入字符串">
-        <el-input v-model="originString" type="textarea" class="url-encode-textarea" />
-      </el-form-item>
-
-      <el-form-item label="32位 小写">
-        <el-input v-model="md5Uppercase32" type="textarea" class="url-encode-textarea" />
-      </el-form-item>
-
-      <el-form-item label="32位 大写">
-        <el-input v-model="md5Lowercase32" type="textarea" class="url-encode-textarea" />
-      </el-form-item>
+      <p>输入字符串:</p>
+      <el-input v-model="originString" type="textarea" class="url-encode-textarea" />
+      <p>32位 小写:</p>
+      <el-input v-model="md5Uppercase32" type="textarea" class="url-encode-textarea" />
+      <p>32位 大写:</p>
+      <el-input v-model="md5Lowercase32" type="textarea" class="url-encode-textarea" />
     </el-form>
   </div>
 </template>
@@ -20,7 +15,7 @@
 import md5 from 'crypto-js/md5'
 
 export default {
-  name: 'Md5Digest',
+  name: 'Md5',
   data() {
     return {
       originString: ''
@@ -43,6 +38,10 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style lang="scss">
+.hash-container .md5-container {
+  textarea {
+    height: 150px;
+  }
+}
 </style>

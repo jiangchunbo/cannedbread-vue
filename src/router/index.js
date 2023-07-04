@@ -55,28 +55,47 @@ export const constantRoutes = [
     }]
   },
   {
-    path: "/menus",
+    path: '/menus',
     component: Layout,
     children: [
       {
-        path: "index",
-        name: "Menus",
-        component: () => import("@/views/menus/index"),
-        meta: { title: "菜单配置", icon: "menus" }
+        path: 'index',
+        name: 'Menus',
+        component: () => import('@/views/menus/index'),
+        meta: { title: '菜单配置', icon: 'menus' }
       }
     ]
   },
   {
-    path: "/relationship",
+    path: '/relationship',
     component: Layout,
     children: [
       {
-        path: "index",
-        component: () => import("@/views/relationship/index"),
-        name: "Relationship",
-        meta: { title: "交友", icon: "relationship", "noCache":true  }
+        path: 'index',
+        component: () => import('@/views/relationship/index'),
+        name: 'Relationship',
+        meta: { title: '交友', icon: 'contact', 'noCache': true }
       }
     ]
+  },
+  {
+    path: '/third-bind',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/third-bind/index'),
+        name: 'ThirdBind',
+        meta: { title: '绑定第三方', icon: 'third-bind', 'noCache': true }
+      }
+    ]
+  },
+  {
+    path: '/javascript-executor',
+    name: 'JavaScriptExecutor',
+    hidden: true,
+    component: () => import('@/views/javascript-executor/index'),
+    meta: { title: 'Javascript 执行器', icon: 'javascript' }
   },
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
@@ -84,99 +103,86 @@ export const constantRoutes = [
 
 const dynamicRoutes = [
   {
-    path: "/update-log",
+    path: '/update-log',
     component: Layout,
     children: [
       {
-        path: "index",
-        name: "UpdateLog",
-        component: () => import("@/views/update-log/index"),
-        meta: { title: "更新日志", icon: "update-log" }
+        path: 'index',
+        name: 'UpdateLog',
+        component: () => import('@/views/update-log/index'),
+        meta: { title: '更新日志', icon: 'update-log' }
+      }
+    ]
+  },
+  {
+    path: '/php',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'Php',
+        component: () => import('@/views/php/index'),
+        meta: { title: 'PHP 执行器', icon: 'php' }
+      }
+    ]
+  },
+  {
+    path: '/message-board',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'MessageBoard',
+        component: () => import('@/views/message-board/index'),
+        meta: { title: '留言板', icon: 'message' }
       }
     ]
   },
 
   {
-    path: "/algorithm",
+    path: '/baidu-netdisk',
     component: Layout,
     children: [
       {
-        path: "index",
-        name: "Algorithm",
-        component: () => import("@/views/algorithm/index"),
-        meta: { title: "加密解密", icon: "encrypt" }
-      }
-    ]
-  },
-  {
-    path: "/php",
-    component: Layout,
-    children: [
-      {
-        path: "index",
-        name: "Php",
-        component: () => import("@/views/php/index"),
-        meta: { title: "PHP 执行器", icon: "php" }
-      }
-    ]
-  },
-  {
-    path: "/message-board",
-    component: Layout,
-    children: [
-      {
-        path: "index",
-        name: "MessageBoard",
-        component: () => import("@/views/message-board/index"),
-        meta: { title: "留言板", icon: "message" }
+        path: 'index',
+        name: 'BaiduNetdisk',
+        component: () => import('@/views/baidu-netdisk/index'),
+        meta: { title: '百度网盘', icon: 'baidu-netdisk' }
       }
     ]
   },
 
   {
-    path: "/baidu-netdisk",
+    path: '/yapi',
     component: Layout,
     children: [
       {
-        path: "index",
-        name: "BaiduNetdisk",
-        component: () => import("@/views/baidu-netdisk/index"),
-        meta: { title: "百度网盘", icon: "baidu-netdisk" }
+        path: 'index',
+        name: 'Yapi',
+        component: () => import('@/views/yapi/index'),
+        meta: { title: 'YAPI', icon: 'yapi' }
       }
     ]
   },
 
   {
-    path: "/yapi",
+    path: '/example',
     component: Layout,
+    redirect: '/example/table',
+    name: 'Example',
+    meta: { title: 'Example', icon: 'el-icon-s-help' },
     children: [
       {
-        path: "index",
-        name: "Yapi",
-        component: () => import("@/views/yapi/index"),
-        meta: { title: "YAPI", icon: "yapi" }
-      }
-    ]
-  },
-
-  {
-    path: "/example",
-    component: Layout,
-    redirect: "/example/table",
-    name: "Example",
-    meta: { title: "Example", icon: "el-icon-s-help" },
-    children: [
-      {
-        path: "table",
-        name: "Table",
-        component: () => import("@/views/table/index"),
-        meta: { title: "Table", icon: "table" }
+        path: 'table',
+        name: 'Table',
+        component: () => import('@/views/table/index'),
+        meta: { title: 'Table', icon: 'table' }
       },
       {
-        path: "tree",
-        name: "Tree",
-        component: () => import("@/views/tree/index"),
-        meta: { title: "Tree", icon: "tree" }
+        path: 'tree',
+        name: 'Tree',
+        component: () => import('@/views/tree/index'),
+        meta: { title: 'Tree', icon: 'tree' }
       }
     ]
   },
@@ -195,108 +201,108 @@ const dynamicRoutes = [
   // },
 
   {
-    path: "/json",
+    path: '/json',
     component: Layout,
     children: [
       {
-        path: "index",
-        name: "Json",
-        component: () => import("@/views/json/index"),
-        meta: { title: "JSON 格式化", icon: "json" }
+        path: 'index',
+        name: 'Json',
+        component: () => import('@/views/json/index'),
+        meta: { title: 'JSON 格式化', icon: 'json' }
       }
     ]
   },
   {
-    path: "/nested",
+    path: '/nested',
     component: Layout,
-    redirect: "/nested/menu1",
-    name: "Nested",
+    redirect: '/nested/menu1',
+    name: 'Nested',
     meta: {
-      title: "Nested",
-      icon: "nested"
+      title: 'Nested',
+      icon: 'nested'
     },
     children: [
       {
-        path: "menu1",
-        component: () => import("@/views/nested/menu1/index"), // Parent router-view
-        name: "Menu1",
-        meta: { title: "Menu1" },
+        path: 'menu1',
+        component: () => import('@/views/nested/menu1/index'), // Parent router-view
+        name: 'Menu1',
+        meta: { title: 'Menu1' },
         children: [
           {
-            path: "menu1-1",
-            component: () => import("@/views/nested/menu1/menu1-1"),
-            name: "Menu1-1",
-            meta: { title: "Menu1-1" }
+            path: 'menu1-1',
+            component: () => import('@/views/nested/menu1/menu1-1'),
+            name: 'Menu1-1',
+            meta: { title: 'Menu1-1' }
           },
           {
-            path: "menu1-2",
-            component: () => import("@/views/nested/menu1/menu1-2"),
-            name: "Menu1-2",
-            meta: { title: "Menu1-2" },
+            path: 'menu1-2',
+            component: () => import('@/views/nested/menu1/menu1-2'),
+            name: 'Menu1-2',
+            meta: { title: 'Menu1-2' },
             children: [
               {
-                path: "menu1-2-1",
-                component: () => import("@/views/nested/menu1/menu1-2/menu1-2-1"),
-                name: "Menu1-2-1",
-                meta: { title: "Menu1-2-1" }
+                path: 'menu1-2-1',
+                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
+                name: 'Menu1-2-1',
+                meta: { title: 'Menu1-2-1' }
               },
               {
-                path: "menu1-2-2",
-                component: () => import("@/views/nested/menu1/menu1-2/menu1-2-2"),
-                name: "Menu1-2-2",
-                meta: { title: "Menu1-2-2" }
+                path: 'menu1-2-2',
+                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
+                name: 'Menu1-2-2',
+                meta: { title: 'Menu1-2-2' }
               }
             ]
           },
           {
-            path: "menu1-3",
-            component: () => import("@/views/nested/menu1/menu1-3"),
-            name: "Menu1-3",
-            meta: { title: "Menu1-3" }
+            path: 'menu1-3',
+            component: () => import('@/views/nested/menu1/menu1-3'),
+            name: 'Menu1-3',
+            meta: { title: 'Menu1-3' }
           }
         ]
       },
       {
-        path: "menu2",
-        component: () => import("@/views/nested/menu2/index"),
-        name: "Menu2",
-        meta: { title: "menu2" }
+        path: 'menu2',
+        component: () => import('@/views/nested/menu2/index'),
+        name: 'Menu2',
+        meta: { title: 'menu2' }
       }
     ]
   },
   {
-    path: "/jenkins",
+    path: '/jenkins',
     component: Layout,
     children: [
       {
-        path: "index",
-        component: () => import("@/views/jenkins/index"),
-        name: "Jenkins",
-        meta: { title: "Jenkins", icon: "jenkins", cacheIframe: true }
+        path: 'index',
+        component: () => import('@/views/jenkins/index'),
+        name: 'Jenkins',
+        meta: { title: 'Jenkins', icon: 'jenkins', cacheIframe: true }
       }
     ]
   },
   {
-    path: "/redis",
+    path: '/redis',
     component: Layout,
     children: [
       {
-        path: "index",
-        component: () => import("@/views/redis/index"),
-        name: "Redis",
-        meta: { title: "RedisInsight", icon: "redis", cacheIframe: true }
+        path: 'index',
+        component: () => import('@/views/redis/index'),
+        name: 'Redis',
+        meta: { title: 'RedisInsight', icon: 'redis', cacheIframe: true }
       }
     ]
   },
   {
-    path: "/rabbitmq",
+    path: '/rabbitmq',
     component: Layout,
     children: [
       {
-        path: "index",
-        name: "Rabbitmq",
-        component: () => import("@/views/rabbitmq/index"),
-        meta: { title: "RabbitMQ", icon: "rabbitmq", cacheIframe: true }
+        path: 'index',
+        name: 'Rabbitmq',
+        component: () => import('@/views/rabbitmq/index'),
+        meta: { title: 'RabbitMQ', icon: 'rabbitmq', cacheIframe: true }
       }
     ]
   },
@@ -311,50 +317,50 @@ const dynamicRoutes = [
   //   ]
   // },
   {
-    path: "/blog",
+    path: '/blog',
     component: Layout,
     children: [
       {
-        path: "index",
-        name: "Blog",
-        component: () => import("@/views/blog/index"),
-        meta: { title: "博客", icon: "blog", cacheIframe: true }
+        path: 'index',
+        name: 'Blog',
+        component: () => import('@/views/blog/index'),
+        meta: { title: '博客', icon: 'blog', cacheIframe: true }
       }
     ]
   },
   {
-    path: "/war3",
+    path: '/war3',
     component: Layout,
     children: [
       {
-        path: "index",
-        name: "war3",
-        component: () => import("@/views/war3/index"),
-        meta: { title: "War3", icon: "war3" }
+        path: 'index',
+        name: 'war3',
+        component: () => import('@/views/war3/index'),
+        meta: { title: 'War3', icon: 'war3' }
       }
     ]
   },
   {
-    path: "/system",
+    path: '/system',
     component: Layout,
     children: [
       {
-        path: "index",
-        name: "System",
-        component: () => import("@/views/system/index"),
-        meta: { title: "系统", icon: "system" }
+        path: 'index',
+        name: 'System',
+        component: () => import('@/views/system/index'),
+        meta: { title: '系统', icon: 'system' }
       }
     ]
   },
   {
-    path: "/mine",
+    path: '/mine',
     component: Layout,
     children: [
       {
-        path: "index",
-        name: "Mine",
-        component: () => import("@/views/mine/index"),
-        meta: { title: "我的", icon: "mine" }
+        path: 'index',
+        name: 'Mine',
+        component: () => import('@/views/mine/index'),
+        meta: { title: '我的', icon: 'mine' }
       }
     ]
   }

@@ -1,0 +1,9 @@
+.CodeMirror {
+  font-family: Consolas, monospace;
+  font-size: 18px;
+  height: 100% !important;
+}
+
+.vue-codemirror {
+  height: 100% !important;
+}
